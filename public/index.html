@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ChipMusic.fm</title>
+
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  </head>
+  <body>
+    <header>
+      <div class="dropdown">
+        <select class="settings-dropdown">
+          <option value="email">-</option>
+          <option value="history">History</option>
+          <option value="favorites">Favorites</option>
+          <!-- <option value="playlists">Playlists</option> -->
+          <option value="settings">Settings</option>
+        </select>
+      </div>
+    </header>
+
+    <div class="song-area">
+      <div class="song-card">
+        <div class="song-card__loading">
+          <span class="fa fa-spin fa-spinner"></span> Loading song...
+        </div>
+        <div class="song-card__loaded">
+          <a class="song-card__title" target="_blank">Song Name</a>
+          <br>by <a class="song-card__artist" href="#" target="_blank">Artist</a>
+          <br><span class="song-card__plays">0</span> plays &middot; <span class="song-card__favorites">0</span> favorites
+        </div>
+      </div>
+
+      <input class="song-seek-bar" type="range" disabled>
+
+      <div class="song-controls">
+        <button class="song-controls__add" disabled><span class="fa fa-download"></span></button>
+        <button class="song-controls__back inverted-button" disabled><span class="fa fa-step-backward"></span></button>
+        <button class="song-controls__play inverted-button" disabled><span class="fa fa-play"></span></button>
+        <button class="song-controls__forward inverted-button" disabled><span class="fa fa-step-forward"></span></button>
+        <button class="song-controls__fave" disabled><span class="fa fa-heart-o"></span></button>
+      </div>
+    </div>
+
+    <audio id="song-player" crossOrigin="anonymous"></audio>
+
+    <footer>
+      <a class="about-link" href="#" target="_blank">About</a> &middot;
+      <a href="https://github.com/andrewrabon/chipmusic-fm" target="_blank">GitHub</a>
+    </footer>
+
+    <dialog id="login-dialog">
+      <button class="close-dialog-button"><span class="fa fa-times"></span></button>
+      <p>By logging in, you can add favorites, view your listening history, and (in the future) create playlists.</p>
+      <div class="dialog-buttons">
+        <button class="login-button">Login</button>
+        <button class="dont-login-button inverted-button">Don't Login</button>
+      </div>
+    </dialog>
+
+    <dialog id="history-dialog">
+      <button class="close-dialog-button"><span class="fa fa-times"></span></button>
+      <p>History.</p>
+    </dialog>
+
+    <dialog id="favorites-dialog">
+      <button class="close-dialog-button"><span class="fa fa-times"></span></button>
+      <p>Favorites.</p>
+    </dialog>
+
+    <dialog id="settings-dialog">
+      <button class="close-dialog-button"><span class="fa fa-times"></span></button>
+      <p>Settings.</p>
+    </dialog>
+
+    <dialog id="about-dialog">
+      <button class="close-dialog-button"><span class="fa fa-times"></span></button>
+      <p>About the thing.</p>
+    </dialog>
+
+    <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBHRRoR5MSf7EDpkOxxoFOyxyEnNvg2E2g",
+        authDomain: "chipmusic-f6069.firebaseapp.com",
+        databaseURL: "https://chipmusic-f6069.firebaseio.com",
+        projectId: "chipmusic-f6069",
+        storageBucket: "chipmusic-f6069.appspot.com",
+        messagingSenderId: "494202829238"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>
