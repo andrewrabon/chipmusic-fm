@@ -18,7 +18,8 @@ window.onload = function() {
   };
 
   var player = getElement('#song-player');
-  var isPlaying = false;
+  var currentSong = null;
+  var songHistory = [];
 
   /**
    * Adds a click handler to an element.
@@ -77,7 +78,10 @@ window.onload = function() {
   const enableSongButtons = function() {
     getElement('.song-seek-bar').removeAttribute('disabled');
     getElement('.song-controls__add').removeAttribute('disabled');
-    getElement('.song-controls__back').removeAttribute('disabled');
+    if (songHistory.length > 1) {
+      console.log(songHistory);
+      getElement('.song-controls__back').removeAttribute('disabled');
+    }
     getElement('.song-controls__play').removeAttribute('disabled');
     getElement('.song-controls__forward').removeAttribute('disabled');
   };
@@ -98,32 +102,42 @@ window.onload = function() {
 
   /**
    * Loads a song and shoves it into the <audio> element.
+   * @param {Boolean} shouldAutoplay - Whether the player should autoplay the song.
+   * @param {Object} [songToLoad] - The optional song to load. Otherwise will load a random song.
    */
-  const loadSong = async function() {
+  const loadSong = async function(shouldAutoplay, songToLoad) {
     disableSongButtons();
     getElement('.song-card__loading').style.display = 'block';
     getElement('.song-card__loaded').style.display = 'none';
 
-    var lengthSnapchat = await database.ref(`/music/length`).once('value');
-    var songIndex = Math.floor(Math.random() * lengthSnapchat.val());
-    var songSnapchat = await database.ref(`/music/songs/${songIndex}`).once('value');
-    var song = songSnapchat.val();
-    player = new Audio(song.file.url);
-    player.load();
-    console.log(songIndex, lengthSnapchat.val(), song);
+    if (typeof songToLoad === 'undefined') {
+      var lengthSnapchat = await database.ref(`/music/length`).once('value');
+      var songIndex = Math.floor(Math.random() * lengthSnapchat.val());
+      var songSnapchat = await database.ref(`/music/songs/${songIndex}`).once('value');
+      currentSong = songSnapchat.val();
+      songHistory.push(currentSong);
+    } else {
+      // TODO
+    }
 
-    var songTitle = song.title;
-    var startIndex = song.artist.length + 3;
+    var songTitle = currentSong.title;
+    var startIndex = currentSong.artist.length + 3;
     songTitle = songTitle.slice(startIndex);
+    player = new Audio(currentSong.file.url);
+    player.load();
 
     enableSongButtons();
     getElement('.song-card__loading').style.display = 'none';
     getElement('.song-card__title').textContent = songTitle;
-    getElement('.song-card__title').href = song.link;
-    getElement('.song-card__artist').textContent = song.artist;
+    getElement('.song-card__title').href = currentSong.link;
+    getElement('.song-card__artist').textContent = currentSong.artist;
     // TODO: plays
     // TODO: faves
     getElement('.song-card__loaded').style.display = 'block';
+
+    if (shouldAutoplay) {
+      player.play();
+    }
   };
 
   // Show the login dialog if this is the user's first visit.
@@ -153,18 +167,31 @@ window.onload = function() {
     closeDialogs();
   });
 
+  addClickHandler(getElement('.song-controls__add'), function(event) {
+    // window.open(currentSong.file.url, '_blank');
+    var anchor = document.createElement('a');
+    anchor.href = currentSong.file.url;
+    anchor.target = '_blank';
+    anchor.download = currentSong.name;
+    anchor.click();
+  });
+
   addClickHandler(getElement('.song-controls__play'), function(event, element) {
-    if (isPlaying) {
+    if (!player.paused) {
       player.pause();
-      isPlaying = false;
       element.getElementsByClassName('fa')[0].classList.add('fa-play');
       element.getElementsByClassName('fa')[0].classList.remove('fa-pause');
     } else {
       player.play();
-      isPlaying = true;
       element.getElementsByClassName('fa')[0].classList.add('fa-pause');
       element.getElementsByClassName('fa')[0].classList.remove('fa-play');
     }
+  });
+
+  addClickHandler(getElement('.song-controls__forward'), function(event) {
+    var shouldAutoplay = !player.paused;
+    player.pause();
+    loadSong(shouldAutoplay);
   });
 
   addClickHandler(getElement('.close-dialog-button'), closeDialogs);

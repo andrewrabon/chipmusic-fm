@@ -127,6 +127,9 @@ body > header .dropdown {
   background: black;
   color: white;
 }
+.song-card a {
+  border-color: white;
+}
 .song-card__title {
   display: inline-block;
   margin-bottom: -6px; /*Dunno why we need this hack...*/
