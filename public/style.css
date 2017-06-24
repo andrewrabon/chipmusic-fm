@@ -8,7 +8,9 @@
   padding: 0;
   box-sizing: border-box;
 }
-body {
+body,
+input,
+button {
   overflow: hidden;
   font-family: 'Montserrat', sans-serif;
   font-size: 18px;
@@ -43,14 +45,32 @@ input[disabled]::-webkit-slider-thumb {
 input[disabled]::-moz-range-thumb {
   background-color: transparent !important;
 }
+p {
+  line-height: 1.5;
+}
+p + p {
+  margin-top: 1.5em;
+}
 dialog {
   top: 100px;
   margin: 0 auto;
   width: 500px;
+  max-height: calc(100vh - 200px);
   padding: calc(1em + var(--dialog-close-button-size)) 1em 1em;
   border: 1px solid black;
+  overflow-y: auto;
 }
 dialog::backdrop {
+  background: black;
+  opacity: 0.7;
+}
+/* Polyfilled version. */
+dialog + .backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: black;
   opacity: 0.7;
 }
@@ -61,6 +81,25 @@ dialog .close-dialog-button {
   position: absolute;
   top: 0;
   right: 0;
+}
+.dialog-loading::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: white;
+  opacity: 0.5;
+  content: ' ';
+}
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  border: 1px solid black;
+  margin-top: 1em;
+  padding: 1em;
 }
 input[type="range"] {
   -webkit-appearance: none;
@@ -93,7 +132,7 @@ input[type=range]::-moz-range-track {
   background: white;
   border: 1px solid black;
   overflow: hidden;
-  padding: 0.5em;
+  padding: 8px 8px 7px;
 }
 .dropdown > select {
   display: inline-block;
@@ -109,8 +148,12 @@ body > header {
   right: 0;
   padding: 1em;
 }
-body > header .dropdown {
+body > header > * {
   float: right;
+  margin-left: 1em;
+}
+body > header > .dropdown {
+  display: none;
 }
 
 .song-area {
@@ -139,7 +182,8 @@ body > header .dropdown {
   max-width: 100%;
   font-weight: bold;
 }
-.song-card__loading .fa {
+.song-card__loading-state .fa,
+.dialog-buttons button .fa {
   display: inline-block;
   width: 18px;
   height: 18px;

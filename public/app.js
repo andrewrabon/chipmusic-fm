@@ -1,59 +1,57 @@
 /* global firebase */
 window.onload = function() {
+  'use strict';
+
   const database = firebase.database();
   const storage = firebase.storage().ref();
-
-  /**
-   * Gets an element based on its query.
-   * @param {string} query - The element query string.
-   * @returns {HTMLElement} A single HTML element for the
-   */
-  const getElement = function(query) {
-    var elements = document.querySelectorAll(query);
-    if (elements.length === 1) {
-      return elements[0];
-    } else {
-      return elements;
-    }
+  const dialogs = document.getElementsByTagName('dialog');
+  const headerDom = {
+    registerButton: document.getElementById('register-button'),
+    loginButton: document.getElementById('login-button'),
+    settingsDropdown: document.getElementById('settings-dropdown')
+  };
+  const playerDom = {
+    seekBar: document.querySelector('.song-seek-bar'),
+    addButton: document.querySelector('.song-controls__add'),
+    backButton: document.querySelector('.song-controls__back'),
+    playButton: document.querySelector('.song-controls__play'),
+    forwardButton: document.querySelector('.song-controls__forward')
+  };
+  const songCardDom = {
+    loadingState: document.querySelector('.song-card__loading-state'),
+    loadedState: document.querySelector('.song-card__loaded-state'),
+    titleLink: document.querySelector('.song-card__title'),
+    artistLink: document.querySelector('.song-card__artist')
   };
 
-  var player = getElement('#song-player');
+  var user = firebase.auth().currentUser;
+  var player;
   var currentSong = null;
   var songHistory = [];
 
-  /**
-   * Adds a click handler to an element.
-   * @param {[type]} elements - The element or elements to add a click handler for.
-   * @param {Function} eventHandler - What to do when the element is clicked.
-   */
-  const addClickHandler = function(elements, eventHandler) {
-    addEventHandler('click', elements, eventHandler);
-  };
-
-  /**
-   * Wires a click handler to a specific class of elements.
-   * @param {Function} eventHandler - What to do when the element is clicked.
-   * @param {HTMLElement[]} elements - The elements to wire up.
-   * @param {string} eventName - The eventName to wire to (e.g. click, change, etc.)
-   */
-  const addEventHandler = function(eventName, elements, eventHandler) {
-    if (!isNodeList(elements)) {
-      elements = [elements];
-    }
-    [].forEach.call(elements, function(element) {
-      element.addEventListener(eventName, function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        eventHandler(event, element);
-      });
+  // Boilerplate to make collections and events easier to work with.
+  HTMLElement.prototype.addClickListener = function(eventHandler) {
+    this.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      eventHandler.apply(this, arguments);
     });
   };
+  NodeList.prototype.addClickListener = function(clickHandler) {
+    this.addEventListener('click', clickHandler);
+  };
+  NodeList.prototype.addEventListener = function(eventName, eventHandler) {
+    [].forEach.call(this, function(element) {
+      element.addEventListener(eventName, eventHandler);
+    });
+  };
+  HTMLCollection.prototype.addClickListener = NodeList.prototype.addClickListener;
+  HTMLCollection.prototype.addEventListener = NodeList.prototype.addEventListener;
 
   /**
    * Closes any open dialogs.
    */
   const closeDialogs = function() {
-    var dialogs = document.getElementsByTagName('dialog');
     [].forEach.call(dialogs, function(dialog) {
       if (dialog.open) {
         dialog.close();
@@ -65,110 +63,208 @@ window.onload = function() {
    * Disables the song buttons, used when loading a new song.
    */
   const disableSongButtons = function() {
-    getElement('.song-seek-bar').setAttribute('disabled', '');
-    getElement('.song-controls__add').setAttribute('disabled', '');
-    getElement('.song-controls__back').setAttribute('disabled', '');
-    getElement('.song-controls__play').setAttribute('disabled', '');
-    getElement('.song-controls__forward').setAttribute('disabled', '');
+    playerDom.seekBar.setAttribute('disabled', '');
+    playerDom.addButton.setAttribute('disabled', '');
+    playerDom.backButton.setAttribute('disabled', '');
+    playerDom.playButton.setAttribute('disabled', '');
+    playerDom.forwardButton.setAttribute('disabled', '');
   };
 
   /**
    * Re-enables the song buttons when a song has loaded enough to play.
    */
   const enableSongButtons = function() {
-    getElement('.song-seek-bar').removeAttribute('disabled');
-    getElement('.song-controls__add').removeAttribute('disabled');
+    playerDom.seekBar.removeAttribute('disabled');
+    playerDom.addButton.removeAttribute('disabled');
     if (songHistory.length > 1) {
-      console.log(songHistory);
-      getElement('.song-controls__back').removeAttribute('disabled');
+      playerDom.backButton.removeAttribute('disabled');
     }
-    getElement('.song-controls__play').removeAttribute('disabled');
-    getElement('.song-controls__forward').removeAttribute('disabled');
+    playerDom.playButton.removeAttribute('disabled');
+    playerDom.forwardButton.removeAttribute('disabled');
   };
 
   /**
-   * Determines if something is a NodeList or HTMLCollection.
-   * @param {*} nodes - The nodes to check.
-   * @returns {Boolean} Whether the given variable is a NodeList or HTMLCollection.
+   * Handles the display side of the user being logged in.
    */
-  function isNodeList(nodes) {
-    var stringRepr = Object.prototype.toString.call(nodes);
+  const handleUserLogin = function(changedUser) {
+    if (changedUser) {
+      user = changedUser;
+    }
 
-    return typeof nodes === 'object' &&
-      /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) &&
-      (typeof nodes.length === 'number') &&
-      (nodes.length === 0 || (typeof nodes[0] === "object" && nodes[0].nodeType > 0));
-  }
+    if (user) {
+      headerDom.registerButton.style.display = 'none';
+      headerDom.loginButton.style.display = 'none';
+      headerDom.settingsDropdown.style.display = 'inline-block';
+      document.querySelector('#settings-dropdown [value="email"]').textContent = user.email;
+    } else {
+      headerDom.registerButton.style.display = 'inline-block';
+      headerDom.loginButton.style.display = 'inline-block';
+      headerDom.settingsDropdown.style.display = 'none';
+    }
+  };
 
   /**
    * Loads a song and shoves it into the <audio> element.
    * @param {Boolean} shouldAutoplay - Whether the player should autoplay the song.
-   * @param {Object} [songToLoad] - The optional song to load. Otherwise will load a random song.
+   * @param {Boolean} [shouldPlayPreviousSong] - Whether to play the previous song instead of loading a new one.
    */
-  const loadSong = async function(shouldAutoplay, songToLoad) {
+  const loadSong = async function(shouldAutoplay, shouldPlayPreviousSong) {
     disableSongButtons();
-    getElement('.song-card__loading').style.display = 'block';
-    getElement('.song-card__loaded').style.display = 'none';
+    songCardDom.loadedState.style.display = 'none';
+    songCardDom.loadingState.style.display = 'block';
 
-    if (typeof songToLoad === 'undefined') {
+    if (shouldPlayPreviousSong) {
+      currentSong = songHistory[songHistory.length - 2];
+      // TODO: Logic for repeating the current song if > 5 seconds have passed.
+    } else if (typeof shouldGoBack === 'undefined') {
       var lengthSnapchat = await database.ref(`/music/length`).once('value');
       var songIndex = Math.floor(Math.random() * lengthSnapchat.val());
       var songSnapchat = await database.ref(`/music/songs/${songIndex}`).once('value');
       currentSong = songSnapchat.val();
       songHistory.push(currentSong);
-    } else {
-      // TODO
     }
 
     var songTitle = currentSong.title;
     var startIndex = currentSong.artist.length + 3;
     songTitle = songTitle.slice(startIndex);
+
+    // Create the audio element and wire up the event listeners to it.
     player = new Audio(currentSong.file.url);
     player.load();
+    player.addEventListener('ended', function() {
+      loadSong(true);
+    });
+    player.addEventListener('play', function(event) {
+      var classList = playerDom.playButton.getElementsByClassName('fa')[0].classList;
+      classList.remove('fa-play');
+      classList.add('fa-pause');
+    });
+    player.addEventListener('pause', function() {
+      var classList = playerDom.playButton.getElementsByClassName('fa')[0].classList;
+      classList.add('fa-play');
+      classList.remove('fa-pause');
+    });
+    player.addEventListener('canplay', function() {
+      enableSongButtons();
+      songCardDom.loadingState.style.display = 'none';
+      songCardDom.titleLink.textContent = songTitle;
+      songCardDom.titleLink.href = currentSong.link;
+      songCardDom.artistLink.textContent = currentSong.artist;
+      songCardDom.artistLink.href = 'http://chipmusic.org/' + currentSong.artist;
+      // TODO: plays
+      // TODO: faves
+      songCardDom.loadedState.style.display = 'block';
 
-    enableSongButtons();
-    getElement('.song-card__loading').style.display = 'none';
-    getElement('.song-card__title').textContent = songTitle;
-    getElement('.song-card__title').href = currentSong.link;
-    getElement('.song-card__artist').textContent = currentSong.artist;
-    // TODO: plays
-    // TODO: faves
-    getElement('.song-card__loaded').style.display = 'block';
+      if (shouldAutoplay) {
+        player.play();
+      }
+    });
+  };
 
-    if (shouldAutoplay) {
-      player.play();
+  /**
+   * Sets a loading state on a button.
+   * @param {HTMLButtonElement} button - The button to set the loading state on.
+   * @param {Boolean} isLoading - Whether the button should be loading or not.
+   */
+  const setButtonLoading = function(button, isLoading) {
+    if (isLoading) {
+      const icon = document.createElement('span');
+      icon.classList.add('fa', 'fa-spin', 'fa-spinner');
+      button.setAttribute('disabled', '');
+      button.prepend(icon);
+    } else {
+      button.removeAttribute('disabled');
+      button.querySelector('span').remove();
     }
   };
 
-  // Show the login dialog if this is the user's first visit.
-  if (localStorage.getItem('isFirstVisit') !== 'false') {
-    getElement('#login-dialog').showModal();
-  }
+  /**
+   * Toggles the play/pause state of the player.
+   */
+  const togglePlaying = function() {
+    if (!player.paused) {
+      player.pause();
+    } else {
+      player.play();
+    }
+  };
 
   //
   // Wire up event handlers:
   //
 
-  addEventHandler('change', getElement('.settings-dropdown'), function(event, settingsDropdown) {
-    var menuItemName = settingsDropdown.value;
+  window.addEventListener('keydown', function(event) {
+    if (document.activeElement !== document.body) {
+      return;
+    }
+    switch (event.code) {
+      case 'Space':
+        togglePlaying();
+        break;
+      case 'ArrowLeft':
+        loadSong(true, true);
+        break;
+      case 'ArrowRight':
+        loadSong(true);
+        break;
+    }
+  });
+
+  headerDom.registerButton.addClickListener(function(event) {
+    document.getElementById('register-dialog').showModal();
+  });
+
+  headerDom.loginButton.addClickListener(function(event) {
+    document.getElementById('login-dialog').showModal();
+  });
+
+  document.getElementById('register-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const email = form.querySelector('[name=register-email]').value;
+    const password = form.querySelector('[name=register-password]').value;
+    const passwordCheck = form.querySelector('[name=register-password-check]').value;
+    const submitButton = form.querySelector('button');
+    const dialog = document.getElementById('register-dialog');
+
+    dialog.classList.add('dialog-loading');
+    setButtonLoading(submitButton, true);
+
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+      console.error(error);
+      dialog.close();
+    });
+    dialog.close();
+  });
+
+  document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const email = form.querySelector('[name=login-email]').value;
+    const password = form.querySelector('[name=login-password]').value;
+    const submitButton = form.querySelector('button');
+    const dialog = document.getElementById('login-dialog');
+
+    dialog.classList.add('dialog-loading');
+    setButtonLoading(submitButton, true);
+
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      console.error(error);
+      dialog.close();
+    });
+    dialog.close();
+  });
+
+  document.querySelector('#settings-dropdown > select').addEventListener('change', function(event) {
+    const settingsDropdown = event.currentTarget;
+    const menuItemName = settingsDropdown.value;
     settingsDropdown.value = 'email';
-    var dialog = getElement('#' + menuItemName + '-dialog');
-    dialog.showModal();
+    document.getElementById(menuItemName + '-dialog').showModal();
   });
 
-  addClickHandler(getElement('.login-button'), 'click', function() {
-    localStorage.setItem('isFirstVisit', false);
-    // TODO
-    closeDialogs();
-  });
-
-  addClickHandler(getElement('.dont-login-button'), function() {
-    localStorage.setItem('isFirstVisit', false);
-    closeDialogs();
-  });
-
-  addClickHandler(getElement('.song-controls__add'), function(event) {
-    // window.open(currentSong.file.url, '_blank');
+  playerDom.addButton.addClickListener(function(event) {
     var anchor = document.createElement('a');
     anchor.href = currentSong.file.url;
     anchor.target = '_blank';
@@ -176,31 +272,44 @@ window.onload = function() {
     anchor.click();
   });
 
-  addClickHandler(getElement('.song-controls__play'), function(event, element) {
+  playerDom.backButton.addClickListener(function(event) {
+    var shouldAutoplay = !player.paused;
+    player.pause();
+    loadSong(shouldAutoplay, true);
+  });
+
+  playerDom.playButton.addClickListener(function(event) {
+    var element = event.currentTarget;
     if (!player.paused) {
       player.pause();
-      element.getElementsByClassName('fa')[0].classList.add('fa-play');
-      element.getElementsByClassName('fa')[0].classList.remove('fa-pause');
     } else {
       player.play();
-      element.getElementsByClassName('fa')[0].classList.add('fa-pause');
-      element.getElementsByClassName('fa')[0].classList.remove('fa-play');
     }
   });
 
-  addClickHandler(getElement('.song-controls__forward'), function(event) {
+  playerDom.forwardButton.addClickListener(function() {
     var shouldAutoplay = !player.paused;
     player.pause();
     loadSong(shouldAutoplay);
   });
 
-  addClickHandler(getElement('.close-dialog-button'), closeDialogs);
+  document.querySelectorAll('.close-dialog-button').addClickListener(closeDialogs);
 
-  addClickHandler(getElement('.about-link'), function() {
+  document.querySelector('.about-link').addClickListener(function() {
     var dialog = document.getElementById('about-dialog');
     dialog.showModal();
   });
 
+  firebase.auth().onAuthStateChanged(handleUserLogin);
+
   // Load the initial song.
   loadSong();
+
+  // Handle user login.
+  handleUserLogin();
+
+  // Polyfills the dialog element for non-Chrome browsers.
+  for (var i = 0; i < dialogs.length; i++) {
+    dialogPolyfill.registerDialog(dialogs[i]);
+  }
 };
