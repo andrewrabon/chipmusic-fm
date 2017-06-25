@@ -5,10 +5,13 @@
         "$songId": {
           "listenCount": {
             ".write": true
+          },
+          "likeCount": {
+            ".write": "auth != null"
           }
-        },
-        ".read": true
-      }
+        }
+      },
+      ".read": true
     },
     "userSettings": {
       "$userId": {

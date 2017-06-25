@@ -257,8 +257,6 @@ window.onload = function() {
       songCardDom.titleLink.href = currentSong.link;
       songCardDom.artistLink.textContent = currentSong.artist;
       songCardDom.artistLink.href = 'http://chipmusic.org/' + currentSong.artist;
-      // TODO: plays
-      // TODO: likes
       songCardDom.loadedState.style.display = 'block';
       playerDom.seekBar.value = 0;
       playerDom.seekBar.max = player.duration;
@@ -341,7 +339,7 @@ window.onload = function() {
         userSettings.likedSongs[getCurrentSongId()] = currentSong;
       }
       songCardDom.likeCount.textContent = currentSong.likeCount;
-      songsRef.set(currentSong);
+      database.ref(`/music/songs/${currentSongIndex}/likeCount`).set(currentSong.likeCount);
       userSettingsRef.set(userSettings);
     }
   };
