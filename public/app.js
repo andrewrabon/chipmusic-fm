@@ -198,8 +198,7 @@ window.onload = function() {
       currentSong = songHistory[songHistory.length - previousSongDifferential];
     } else if (typeof shouldGoBack === 'undefined') {
       var lengthSnapchat = await database.ref(`/music/length`).once('value');
-      // currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
-      currentSongIndex = 6330;
+      currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
       songsRef = database.ref(`/music/songs/${currentSongIndex}`);
       var songSnapchat = await songsRef.once('value');
       currentSong = songSnapchat.val();
