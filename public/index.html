@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
   <head>
     <meta charset="utf-8">
     <title>ChipMusic.fm</title>
 
-    <link rel="icon" href="favicon.png">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="font-awesome.min.css">
+    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="description" content="A simple shuffle-only music player for ChipMusic.org.">
+
+    <link rel="icon" href="/icons/16.png">
+    <link rel="icon" sizes="192x192" href="/icons/circle192.png">
+    <link rel="apple-touch-icon" href="/icons/circle192.png">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="manifest" href="/manifest.json">
   </head>
   <body>
     <header>
@@ -15,11 +22,11 @@
       <button id="login-button" class="inverted-button">Login</button>
       <div id="settings-dropdown" class="dropdown">
         <select>
-          <option value="email">-</option>
+          <option value="email">Loading…</option>
           <option value="history">History</option>
-          <option value="favorites">Favorites</option>
+          <option value="likes">Likes</option>
           <!-- <option value="playlists">Playlists</option> -->
-          <option value="settings">Settings</option>
+          <!-- <option value="settings">Settings</option> -->
           <option value="logout">Logout</option>
         </select>
       </div>
@@ -28,23 +35,23 @@
     <div class="song-area">
       <div class="song-card">
         <div class="song-card__loading-state">
-          <span class="fa fa-spin fa-spinner"></span> Loading song...
+          <span class="fa fa-spin fa-spinner"></span> Loading song…
         </div>
         <div class="song-card__loaded-state" style="display: none;">
           <a class="song-card__title" target="_blank">Song Name</a>
           <br>by <a class="song-card__artist" target="_blank">Artist</a>
-          <br><span class="song-card__plays">0</span> plays &middot; <span class="song-card__favorites">0</span> favorites
+          <br><span class="song-card__plays">0</span> plays &middot; <span class="song-card__likes">0</span> likes
         </div>
       </div>
 
-      <input class="song-seek-bar" type="range" disabled>
+      <input class="song-seek-bar" type="range" min="0" value="0" step="0.01" disabled>
 
       <div class="song-controls">
-        <button class="song-controls__add" disabled><span class="fa fa-download"></span></button>
-        <button class="song-controls__back inverted-button" disabled><span class="fa fa-step-backward"></span></button>
-        <button class="song-controls__play inverted-button" disabled><span class="fa fa-play"></span></button>
-        <button class="song-controls__forward inverted-button" disabled><span class="fa fa-step-forward"></span></button>
-        <button class="song-controls__fave" disabled><span class="fa fa-heart-o"></span></button>
+        <button class="song-controls__add" title="Download this song (Shift + D)" disabled><span class="fa fa-download"></span></button>
+        <button class="song-controls__back inverted-button" title="Previous song (Left Arrow)" disabled><span class="fa fa-step-backward"></span></button>
+        <button class="song-controls__play inverted-button" title="Play or pause (Space)" disabled><span class="fa fa-play"></span></button>
+        <button class="song-controls__forward inverted-button" title="Next song (Right Arrow)" disabled><span class="fa fa-step-forward"></span></button>
+        <button class="song-controls__like" title="Like this song (Shift + L)" disabled><span class="fa fa-heart-o"></span></button>
       </div>
     </div>
 
@@ -55,7 +62,8 @@
 
     <dialog id="register-dialog">
       <button class="close-dialog-button fa fa-times"></button>
-      <p>By registering, you can add favorites, view your listening history, and (in the future) create playlists.</p>
+      <p class="dialog-error"></p>
+      <p>By registering, you can like songs, view your listening history, and (in the future) create playlists.</p>
 
       <form id="register-form">
         <input name="register-email" type="email" placeholder="Email" required>
@@ -81,12 +89,12 @@
 
     <dialog id="history-dialog">
       <button class="close-dialog-button fa fa-times"></button>
-      <p>History.</p>
+      <table id="history-table"></table>
     </dialog>
 
-    <dialog id="favorites-dialog">
+    <dialog id="likes-dialog">
       <button class="close-dialog-button fa fa-times"></button>
-      <p>Favorites.</p>
+      <table id="likes-table"></table>
     </dialog>
 
     <dialog id="settings-dialog">
@@ -98,6 +106,7 @@
       <button class="close-dialog-button fa fa-times"></button>
       <p>ChipMusic.fm is an open-source music player for all the amazing <a href="https://creativecommons.org/" target="_blank">Creative Commons</a> chiptunes found on <a href="http://chipmusic.org">ChipMusic.org</a>. This project is not endorsed by ChipMusic.org and is a passion project by me, <a href="https://andrewrabon.com" target="_blank">Andrew Rabon</a>.</p>
       <p>Unlike most music players, ChipMusic.fm is shuffle-only. My hope is that this site will make it easier to discover and share great new tracks from the nearly 8,000 songs that have been uploaded to ChipMusic.org over the years.</p>
+      <p>Emails are only used for listen history and song liking purposes. They will not be shared with third-parties nor will I spam you. Promise. 👍</p>
       <p>Playlist support and apps for iOS, Android, Windows, macOS and Linux are coming… eventually. 😅</p>
     </dialog>
 

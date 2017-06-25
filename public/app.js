@@ -15,19 +15,28 @@ window.onload = function() {
     addButton: document.querySelector('.song-controls__add'),
     backButton: document.querySelector('.song-controls__back'),
     playButton: document.querySelector('.song-controls__play'),
-    forwardButton: document.querySelector('.song-controls__forward')
+    forwardButton: document.querySelector('.song-controls__forward'),
+    likeButton: document.querySelector('.song-controls__like')
   };
   const songCardDom = {
     loadingState: document.querySelector('.song-card__loading-state'),
     loadedState: document.querySelector('.song-card__loaded-state'),
     titleLink: document.querySelector('.song-card__title'),
-    artistLink: document.querySelector('.song-card__artist')
+    artistLink: document.querySelector('.song-card__artist'),
+    listenCount: document.querySelector('.song-card__plays'),
+    likeCount: document.querySelector('.song-card__likes')
   };
 
   var user = firebase.auth().currentUser;
+  var userSettings = {};
+  var userSettingsRef = null;
+  var songsRef = null;
   var player;
+  var playerCanPlay = false;
   var currentSong = null;
+  var currentSongIndex = null;
   var songHistory = [];
+  var hasViewedCurrentSong = false;
 
   // Boilerplate to make collections and events easier to work with.
   HTMLElement.prototype.addClickListener = function(eventHandler) {
@@ -49,6 +58,18 @@ window.onload = function() {
   HTMLCollection.prototype.addEventListener = NodeList.prototype.addEventListener;
 
   /**
+   * Adds the current song to the user's listen history.
+   */
+  const addCurrentSongToUserHistory = function() {
+    if (user && userSettings && userSettingsRef) {
+      userSettings.listenHistory = userSettings.listenHistory ? userSettings.listenHistory : [];
+      currentSong.listenTimestamp = Date.now();
+      userSettings.listenHistory.push(currentSong);
+      userSettingsRef.set(userSettings);
+    }
+  };
+
+  /**
    * Closes any open dialogs.
    */
   const closeDialogs = function() {
@@ -60,6 +81,17 @@ window.onload = function() {
   };
 
   /**
+   * Downloads the current song.
+   */
+  const downloadCurrentSong = function() {
+    var anchor = document.createElement('a');
+    anchor.href = currentSong.file.url;
+    anchor.target = '_blank';
+    anchor.download = currentSong.name;
+    anchor.click();
+  };
+
+  /**
    * Disables the song buttons, used when loading a new song.
    */
   const disableSongButtons = function() {
@@ -68,6 +100,7 @@ window.onload = function() {
     playerDom.backButton.setAttribute('disabled', '');
     playerDom.playButton.setAttribute('disabled', '');
     playerDom.forwardButton.setAttribute('disabled', '');
+    playerDom.likeButton.setAttribute('disabled', '');
   };
 
   /**
@@ -76,19 +109,39 @@ window.onload = function() {
   const enableSongButtons = function() {
     playerDom.seekBar.removeAttribute('disabled');
     playerDom.addButton.removeAttribute('disabled');
-    if (songHistory.length > 1) {
-      playerDom.backButton.removeAttribute('disabled');
-    }
+    toggleBackButton();
     playerDom.playButton.removeAttribute('disabled');
     playerDom.forwardButton.removeAttribute('disabled');
+    if (user) {
+      playerDom.likeButton.removeAttribute('disabled');
+    }
+  };
+
+  /**
+   * Returns the current song's ID, which is the link minus alphanumeric chars.
+   * @returns {String} The current song's ID.
+   */
+  const getCurrentSongId = function() {
+    return currentSong.uuid.replace(/\W/g, '');
+  };
+
+  /**
+   * Returns the user's ID, which is their email minus alphanumeric chars.
+   * @returns {String} The user's ID.
+   */
+  const getUserId = function() {
+    return user.email.replace(/\W/g, '');
   };
 
   /**
    * Handles the display side of the user being logged in.
+   * @param {Object} changedUser - If this is being fired from a login event, this is the user.
    */
-  const handleUserLogin = function(changedUser) {
+  const handleUserLogin = async function(changedUser) {
     if (changedUser) {
       user = changedUser;
+    } else {
+      user = firebase.auth().currentUser;
     }
 
     if (user) {
@@ -96,11 +149,30 @@ window.onload = function() {
       headerDom.loginButton.style.display = 'none';
       headerDom.settingsDropdown.style.display = 'inline-block';
       document.querySelector('#settings-dropdown [value="email"]').textContent = user.email;
+      if (playerCanPlay) {
+        playerDom.likeButton.removeAttribute('disabled');
+      }
+
+      var userId = getUserId();
+      userSettingsRef = database.ref(`/userSettings/${userId}`);
+      var userSettingsSnapchat = await userSettingsRef.once('value');
+      userSettings = userSettingsSnapchat.val();
+      userSettings = userSettings ? userSettings : {};
     } else {
       headerDom.registerButton.style.display = 'inline-block';
       headerDom.loginButton.style.display = 'inline-block';
       headerDom.settingsDropdown.style.display = 'none';
+      playerDom.likeButton.setAttribute('disabled', '');
     }
+  };
+
+  /**
+   * Determines whether the user has liked the current song.
+   * @returns {Boolean} Whether the user has liked the current song.
+   */
+  const hasUserLikedCurrentSong = function() {
+    userSettings.likedSongs = userSettings.likedSongs ? userSettings.likedSongs : {};
+    return !!userSettings.likedSongs[getCurrentSongId()];
   };
 
   /**
@@ -110,16 +182,26 @@ window.onload = function() {
    */
   const loadSong = async function(shouldAutoplay, shouldPlayPreviousSong) {
     disableSongButtons();
+    playerCanPlay = false;
+    hasViewedCurrentSong = false;
     songCardDom.loadedState.style.display = 'none';
     songCardDom.loadingState.style.display = 'block';
 
+    var previousSongDifferential;
     if (shouldPlayPreviousSong) {
-      currentSong = songHistory[songHistory.length - 2];
-      // TODO: Logic for repeating the current song if > 5 seconds have passed.
+      // Repeat the current song if >5 seconds have passed, or if there are no more songs left.
+      if ((player && player.currentTime > 5) || songHistory.length - 2 < 0) {
+        previousSongDifferential = 1;
+      } else {
+        previousSongDifferential = 2;
+      }
+      currentSong = songHistory[songHistory.length - previousSongDifferential];
     } else if (typeof shouldGoBack === 'undefined') {
       var lengthSnapchat = await database.ref(`/music/length`).once('value');
-      var songIndex = Math.floor(Math.random() * lengthSnapchat.val());
-      var songSnapchat = await database.ref(`/music/songs/${songIndex}`).once('value');
+      // currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
+      currentSongIndex = 6330;
+      songsRef = database.ref(`/music/songs/${currentSongIndex}`);
+      var songSnapchat = await songsRef.once('value');
       currentSong = songSnapchat.val();
       songHistory.push(currentSong);
     }
@@ -127,6 +209,17 @@ window.onload = function() {
     var songTitle = currentSong.title;
     var startIndex = currentSong.artist.length + 3;
     songTitle = songTitle.slice(startIndex);
+
+    var likeButtonClassList = playerDom.likeButton.getElementsByClassName('fa')[0].classList;
+    if (hasUserLikedCurrentSong()) {
+      likeButtonClassList.remove('fa-heart-o');
+      likeButtonClassList.add('fa-heart');
+    } else {
+      likeButtonClassList.add('fa-heart-o');
+      likeButtonClassList.remove('fa-heart');
+    }
+    songCardDom.listenCount.textContent = currentSong.listenCount ? currentSong.listenCount : 0;
+    songCardDom.likeCount.textContent = currentSong.likeCount ? currentSong.likeCount : 0;
 
     // Create the audio element and wire up the event listeners to it.
     player = new Audio(currentSong.file.url);
@@ -144,7 +237,21 @@ window.onload = function() {
       classList.add('fa-play');
       classList.remove('fa-pause');
     });
+    player.addEventListener('timeupdate', function() {
+      playerDom.seekBar.value = player.currentTime;
+
+      if (!hasViewedCurrentSong && !player.paused && player.currentTime / player.duration > 0.5) {
+        currentSong.listenCount = currentSong.listenCount ? parseInt(currentSong.listenCount, 10) + 1 : 1;
+        hasViewedCurrentSong = true;
+        database.ref(`/music/songs/${currentSongIndex}/listenCount`).set(currentSong.listenCount);
+        songCardDom.listenCount.textContent = currentSong.listenCount;
+        addCurrentSongToUserHistory();
+      }
+
+      toggleBackButton();
+    });
     player.addEventListener('canplay', function() {
+      playerCanPlay = true;
       enableSongButtons();
       songCardDom.loadingState.style.display = 'none';
       songCardDom.titleLink.textContent = songTitle;
@@ -152,13 +259,27 @@ window.onload = function() {
       songCardDom.artistLink.textContent = currentSong.artist;
       songCardDom.artistLink.href = 'http://chipmusic.org/' + currentSong.artist;
       // TODO: plays
-      // TODO: faves
+      // TODO: likes
       songCardDom.loadedState.style.display = 'block';
+      playerDom.seekBar.value = 0;
+      playerDom.seekBar.max = player.duration;
 
       if (shouldAutoplay) {
         player.play();
       }
     });
+  };
+
+  const playerSkipBackward = function() {
+    var shouldAutoplay = !player.paused;
+    player.pause();
+    loadSong(shouldAutoplay, true);
+  };
+
+  const playerSkipForward = function() {
+    var shouldAutoplay = !player.paused;
+    player.pause();
+    loadSong(shouldAutoplay);
   };
 
   /**
@@ -179,6 +300,18 @@ window.onload = function() {
   };
 
   /**
+   * Toggles the back button's enabled state depending on the current play time and song history.
+   * @returns {[type]} [description]
+   */
+  const toggleBackButton = function() {
+    if ((player && player.currentTime > 5) || (songHistory.length > 1)) {
+      playerDom.backButton.removeAttribute('disabled');
+    } else {
+      playerDom.backButton.setAttribute('disabled', '');
+    }
+  };
+
+  /**
    * Toggles the play/pause state of the player.
    */
   const togglePlaying = function() {
@@ -187,6 +320,60 @@ window.onload = function() {
     } else {
       player.play();
     }
+  };
+
+  /**
+   * Toggles whether the current song is liked by the user.
+   */
+  const toggleSongLike = function() {
+    if (currentSong && songsRef && userSettingsRef) {
+      var classList = playerDom.likeButton.getElementsByClassName('fa')[0].classList;
+      var likeCount = currentSong.likeCount ? currentSong.likeCount : 0;
+      userSettings.likedSongs = userSettings.likedSongs ? userSettings.likedSongs : {};
+      if (hasUserLikedCurrentSong()) {
+        currentSong.likeCount = likeCount - 1;
+        classList.add('fa-heart-o');
+        classList.remove('fa-heart');
+        userSettings.likedSongs[getCurrentSongId()] = null;
+      } else {
+        currentSong.likeCount = likeCount + 1;
+        classList.remove('fa-heart-o');
+        classList.add('fa-heart');
+        userSettings.likedSongs[getCurrentSongId()] = currentSong;
+      }
+      songCardDom.likeCount.textContent = currentSong.likeCount;
+      songsRef.set(currentSong);
+      userSettingsRef.set(userSettings);
+    }
+  };
+
+  /**
+   * Populates a given table in the DOM with the
+   * @param {HTMLTableElement} table - The table to render rows for.
+   * @param {Array} songs - The songs to fill out the rows with.
+   */
+  const populateTable = function(table, songs) {
+    if (songs.length === 0) {
+      table.innerHTML = `<tr><td>No songs found. 😞</td></tr>`;
+    } else {
+      table.innerHTML = '';
+    }
+    var reversedSongs = JSON.parse(JSON.stringify(songs)); // Reverse chronological order.
+    reversedSongs.reverse();
+    reversedSongs.forEach(function(song) {
+      var dateCell = '';
+      if (song.listenTimestamp) {
+        const rawDate = new Date(song.listenTimestamp);
+        const date = rawDate.toLocaleDateString('en-US');
+        const time = `${rawDate.getHours()}:${rawDate.getMinutes()}:${rawDate.getSeconds()}`;
+        dateCell = `<td class="inverted-table-cell" title="@ ${time}">${date}</td>`;
+      }
+
+      var row = document.createElement('tr');
+      row.innerHTML = `<td><a href="${song.link}" target="_blank">${song.title}</a></td>
+        ${dateCell}`;
+      table.appendChild(row);
+    });
   };
 
   //
@@ -198,15 +385,24 @@ window.onload = function() {
       return;
     }
     switch (event.code) {
+      case 'KeyD':
+        if (event.shiftKey) {
+          downloadCurrentSong();
+        }
+        break;
       case 'Space':
         togglePlaying();
         break;
       case 'ArrowLeft':
-        loadSong(true, true);
+        playerSkipBackward();
         break;
       case 'ArrowRight':
-        loadSong(true);
+        playerSkipForward();
         break;
+      case 'KeyL':
+        if (event.shiftKey) {
+          toggleSongLike();
+        }
     }
   });
 
@@ -227,15 +423,30 @@ window.onload = function() {
     const passwordCheck = form.querySelector('[name=register-password-check]').value;
     const submitButton = form.querySelector('button');
     const dialog = document.getElementById('register-dialog');
+    const dialogError = dialog.querySelector('.dialog-error');
+
+    if (password !== passwordCheck && dialogError) {
+      dialogError.textContent = 'Error! Passwords do not match.'
+      dialogError.style.display = 'block';
+      return;
+    }
 
     dialog.classList.add('dialog-loading');
     setButtonLoading(submitButton, true);
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-      console.error(error);
-      dialog.close();
-    });
-    dialog.close();
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(function() {
+        dialog.classList.remove('dialog-loading');
+        setButtonLoading(submitButton, false);
+        dialog.close();
+      })
+      .catch(function(error) {
+        console.error(error);
+        setButtonLoading(submitButton, false);
+        dialog.classList.remove('dialog-loading');
+        // TODO: Error handling.
+        // dialog.close();
+      });
   });
 
   document.getElementById('login-form').addEventListener('submit', function(event) {
@@ -250,47 +461,61 @@ window.onload = function() {
     dialog.classList.add('dialog-loading');
     setButtonLoading(submitButton, true);
 
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-      console.error(error);
-      dialog.close();
-    });
-    dialog.close();
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(function() {
+        dialog.classList.remove('dialog-loading');
+        setButtonLoading(submitButton, false);
+        dialog.close();
+      })
+      .catch(function(error) {
+        console.error(error);
+        dialog.classList.remove('dialog-loading');
+        setButtonLoading(submitButton, false);
+        // TODO: Error handling.
+      });
   });
 
   document.querySelector('#settings-dropdown > select').addEventListener('change', function(event) {
     const settingsDropdown = event.currentTarget;
     const menuItemName = settingsDropdown.value;
     settingsDropdown.value = 'email';
-    document.getElementById(menuItemName + '-dialog').showModal();
-  });
 
-  playerDom.addButton.addClickListener(function(event) {
-    var anchor = document.createElement('a');
-    anchor.href = currentSong.file.url;
-    anchor.target = '_blank';
-    anchor.download = currentSong.name;
-    anchor.click();
-  });
-
-  playerDom.backButton.addClickListener(function(event) {
-    var shouldAutoplay = !player.paused;
-    player.pause();
-    loadSong(shouldAutoplay, true);
-  });
-
-  playerDom.playButton.addClickListener(function(event) {
-    var element = event.currentTarget;
-    if (!player.paused) {
-      player.pause();
+    if (menuItemName === 'logout') {
+      firebase.auth().signOut()
+        .then(() => handleUserLogin(false))
+        .catch((error) => console.error(error));
     } else {
-      player.play();
+      const listenHistory = userSettings.listenHistory ? userSettings.listenHistory : [];
+      var likedSongs = [];
+      if (userSettings.likedSongs) {
+        Object.keys(userSettings.likedSongs).forEach(function(songId) {
+          const song = userSettings.likedSongs[songId];
+          if (song) {
+            likedSongs.push(song);
+          }
+        });
+      }
+      switch(menuItemName) {
+        case 'history':
+          populateTable(document.getElementById('history-table'), listenHistory);
+          break;
+        case 'likes':
+          populateTable(document.getElementById('likes-table'), likedSongs);
+          break;
+      }
+      document.getElementById(menuItemName + '-dialog').showModal();
     }
   });
 
-  playerDom.forwardButton.addClickListener(function() {
-    var shouldAutoplay = !player.paused;
-    player.pause();
-    loadSong(shouldAutoplay);
+  playerDom.addButton.addClickListener(downloadCurrentSong);
+
+  playerDom.backButton.addClickListener(playerSkipBackward);
+  playerDom.playButton.addClickListener(togglePlaying);
+  playerDom.forwardButton.addClickListener(playerSkipForward);
+  playerDom.likeButton.addClickListener(toggleSongLike);
+
+  playerDom.seekBar.addEventListener('change', function() {
+    player.currentTime = playerDom.seekBar.value;
   });
 
   document.querySelectorAll('.close-dialog-button').addClickListener(closeDialogs);
@@ -305,11 +530,12 @@ window.onload = function() {
   // Load the initial song.
   loadSong();
 
-  // Handle user login.
-  handleUserLogin();
-
   // Polyfills the dialog element for non-Chrome browsers.
   for (var i = 0; i < dialogs.length; i++) {
     dialogPolyfill.registerDialog(dialogs[i]);
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
   }
 };

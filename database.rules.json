@@ -1,5 +1,14 @@
 {
   "rules": {
+    "music": {
+      "songs": {
+        "$songId": {
+          "listenCount": {
+            ".write": true
+          }
+        }
+      }
+    },
     ".read": true,
     ".write": "auth != null"
   }
