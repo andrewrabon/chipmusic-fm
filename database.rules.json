@@ -6,10 +6,15 @@
           "listenCount": {
             ".write": true
           }
-        }
+        },
+        ".read": true
       }
     },
-    ".read": true,
-    ".write": "auth != null"
+    "userSettings": {
+      "$userId": {
+        ".read": "auth != null && $userId == auth.uid",
+        ".write": "auth != null && $userId == auth.uid"
+      }
+    }
   }
 }

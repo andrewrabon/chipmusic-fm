@@ -130,7 +130,7 @@ window.onload = function() {
    * @returns {String} The user's ID.
    */
   const getUserId = function() {
-    return user.email.replace(/\W/g, '');
+    return user.uid;
   };
 
   /**
