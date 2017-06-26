@@ -240,7 +240,7 @@ window.onload = function() {
     player.addEventListener('timeupdate', function() {
       playerDom.seekBar.value = player.currentTime;
 
-      if (!hasViewedCurrentSong && !player.paused && player.currentTime / player.duration > 0.5) {
+      if (!hasViewedCurrentSong && !player.paused && player.currentTime > 5) {
         currentSong.listenCount = currentSong.listenCount ? parseInt(currentSong.listenCount, 10) + 1 : 1;
         hasViewedCurrentSong = true;
         database.ref(`/music/songs/${currentSongIndex}/listenCount`).set(currentSong.listenCount);
@@ -268,12 +268,18 @@ window.onload = function() {
     });
   };
 
+  /**
+   * Plays the previous song.
+   */
   const playerSkipBackward = function() {
     var shouldAutoplay = !player.paused;
     player.pause();
     loadSong(shouldAutoplay, true);
   };
 
+  /**
+   * Plays the next song.
+   */
   const playerSkipForward = function() {
     var shouldAutoplay = !player.paused;
     player.pause();
@@ -349,8 +355,10 @@ window.onload = function() {
    * Populates a given table in the DOM with the
    * @param {HTMLTableElement} table - The table to render rows for.
    * @param {Array} songs - The songs to fill out the rows with.
+   * @param {Array} [columns] - String array containing the column keys to show.
    */
-  const populateTable = function(table, songs) {
+  const populateTable = function(table, songs, columns) {
+    columns = Array.isArray(columns) ? columns : [];
     if (songs.length === 0) {
       table.innerHTML = `<tr><td>No songs found. 😞</td></tr>`;
     } else {
@@ -360,7 +368,7 @@ window.onload = function() {
     reversedSongs.reverse();
     reversedSongs.forEach(function(song) {
       var dateCell = '';
-      if (song.listenTimestamp) {
+      if (columns.indexOf('listenTimestamp') !== -1) { // TODO: Cleanup.
         const rawDate = new Date(song.listenTimestamp);
         const date = rawDate.toLocaleDateString('en-US');
         const time = `${rawDate.getHours()}:${rawDate.getMinutes()}:${rawDate.getSeconds()}`;
@@ -401,6 +409,10 @@ window.onload = function() {
         if (event.shiftKey) {
           toggleSongLike();
         }
+        break;
+      case 'KeyV':
+        window.open(currentSong.link, '_blank');
+        break;
     }
   });
 
@@ -495,7 +507,7 @@ window.onload = function() {
       }
       switch(menuItemName) {
         case 'history':
-          populateTable(document.getElementById('history-table'), listenHistory);
+          populateTable(document.getElementById('history-table'), listenHistory, ['listenTimestamp']);
           break;
         case 'likes':
           populateTable(document.getElementById('likes-table'), likedSongs);
