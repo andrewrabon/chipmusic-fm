@@ -5,7 +5,7 @@
     <title>ChipMusic.fm</title>
 
     <meta name="theme-color" content="#000000">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="A simple shuffle-only music player for ChipMusic.org.">
 
     <link rel="icon" href="/icons/16.png">
@@ -38,8 +38,8 @@
           <span class="fa fa-spin fa-spinner"></span> Loading song…
         </div>
         <div class="song-card__loaded-state" style="display: none;">
-          <a class="song-card__title" target="_blank">Song Name</a>
-          <br>by <a class="song-card__artist" target="_blank">Artist</a>
+          <a class="song-card__title" target="_blank" rel="noopener">Song Name</a>
+          <br>by <a class="song-card__artist" target="_blank" rel="noopener">Artist</a>
           <br><span class="song-card__plays">0</span> plays &middot; <span class="song-card__likes">0</span> likes
         </div>
       </div>
@@ -56,8 +56,8 @@
     </div>
 
     <footer>
-      <a class="about-link" href="#" target="_blank">About</a> &middot;
-      <a href="https://github.com/andrewrabon/chipmusic-fm" target="_blank">GitHub</a>
+      <a class="about-link" href="#">About</a> &middot;
+      <a href="https://github.com/andrewrabon/chipmusic-fm" target="_blank" rel="noopener">GitHub</a>
     </footer>
 
     <dialog id="register-dialog">
@@ -104,7 +104,7 @@
 
     <dialog id="about-dialog">
       <button class="close-dialog-button fa fa-times"></button>
-      <p>ChipMusic.fm is an open-source music player for all the amazing <a href="https://creativecommons.org/" target="_blank">Creative Commons</a> chiptunes found on <a href="http://chipmusic.org">ChipMusic.org</a>. This project is not endorsed by ChipMusic.org and is a passion project by me, <a href="https://andrewrabon.com" target="_blank">Andrew Rabon</a>.</p>
+      <p>ChipMusic.fm is an open-source music player for all the amazing <a href="https://creativecommons.org/" target="_blank" rel="noopener">Creative Commons</a> chiptunes found on <a href="http://chipmusic.org" target="_blank" rel="noopener">ChipMusic.org</a>. This project is not endorsed by ChipMusic.org and is a passion project by me, <a href="https://andrewrabon.com" target="_blank" rel="noopener">Andrew Rabon</a>.</p>
       <p>Unlike most music players, ChipMusic.fm is shuffle-only. My hope is that this site will make it easier to discover and share great new tracks from the nearly 8,000 songs that have been uploaded to ChipMusic.org over the years.</p>
       <p>Emails are only used for listen history and song liking purposes. They will not be shared with third-parties nor will I spam you. Promise. 👍</p>
       <p>Playlist support and apps for iOS, Android, Windows, macOS and Linux are coming… eventually. 😅</p>

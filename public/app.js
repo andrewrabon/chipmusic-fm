@@ -87,6 +87,7 @@ window.onload = function() {
     var anchor = document.createElement('a');
     anchor.href = currentSong.file.url;
     anchor.target = '_blank';
+    anchor.rel='noopener';
     anchor.download = currentSong.name;
     anchor.click();
   };
@@ -367,7 +368,7 @@ window.onload = function() {
       }
 
       var row = document.createElement('tr');
-      row.innerHTML = `<td><a href="${song.link}" target="_blank">${song.title}</a></td>
+      row.innerHTML = `<td><a href="${song.link}" target="_blank" rel="noopener">${song.title}</a></td>
         ${dateCell}`;
       table.appendChild(row);
     });
