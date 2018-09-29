@@ -16,4 +16,4 @@ I know the code is kind of this giant monolith right now but I'll be doing a maj
 
 ## License
 
-The code in this repo is licensed under the MIT License. The songs found at ChipMusic.org are mostly licensed under [Creative Commons](https://creativecommons.org/).
+The code in this repo is licensed under the GPLv3 License. The songs found at ChipMusic.org are mostly licensed under [Creative Commons](https://creativecommons.org/).
