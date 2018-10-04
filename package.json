@@ -1,0 +1,22 @@
+{
+  "name": "chipmusic-fm",
+  "version": "2.0.0",
+  "description": "A simple shuffle-only music player for ChipMusic.org.",
+  "main": "public/src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew Rabon",
+  "license": "GPL-3.0",
+  "repository": "https://github.com/andrewrabon/chipmusic-fm",
+  "dependencies": {
+    "concrete-elements": "latest",
+    "css-loader": "^1.0.0",
+    "mini-css-extract-plugin": "^0.4.3",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  },
+  "devDependencies": {
+    "firebase-tools": "^4.2.1"
+  }
+}

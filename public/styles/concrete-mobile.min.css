@@ -1,0 +1,250 @@
+/* General and mobile-specific styles. (This project is mobile-first.) */
+:root {
+  --gray-border: #dfdfdf;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+body {
+  padding-top: 60px;
+  background-color: #fafafa;
+  font-family: sans-serif;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+button {
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+code {
+  display: block;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #eee;
+  border-radius: 3px;
+  word-break: break-all;
+}
+.concrete__code {
+  display: inline;
+  padding: 0.25rem;
+  background: #eee;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+h1,
+h2,
+h3,
+body > header {
+  font-family: 'Comfortaa';
+  font-weight: normal;
+}
+h1,
+body > header {
+  font-size: 1.2rem;
+}
+h2 {
+  font-size: 1rem;
+}
+h3 {
+  padding: 1rem;
+  background: #eee;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+body > header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+  background: white;
+  padding: 1em;
+  text-align: center;
+  font-weight: bold;
+  z-index: 2;
+}
+.header-container {
+  display: flex;
+}
+#back-button,
+#user-button {
+  flex: 1;
+  font-size: 1em;
+  padding: 0;
+  background: transparent;
+  visibility: hidden;
+}
+#logo {
+  flex: 15;
+  padding-top: 2px;
+}
+
+main > * {
+  display: block;
+  transition: transform 0.3s ease;
+}
+article,
+body > header {
+  box-shadow: 0px 1px 5px #aaa;
+}
+article {
+  display: block;
+  margin: 1em;
+  padding: 1em;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 5px;
+  line-height: 1.5;
+}
+article a {
+  text-decoration: underline;
+}
+article h1,
+article h2,
+article h3 {
+  color: #444;
+}
+article h1 {
+  margin: -16px -16px 1.4em -16px;
+  padding: 1em 1em 0.75em;
+  border-bottom: 1px solid var(--gray-border);
+  line-height: 1.5;
+  text-align: center;
+}
+article h1[contenteditable=false] {
+  cursor: default;
+}
+article h1 + h2 {
+  margin: -28px -16px 1.4em -16px;
+  padding: 0em 1em 0.75em;
+  text-align: center;
+  border-top: 1px solid white;
+  border-bottom: 1px solid var(--gray-border);
+  text-align: center;
+}
+article p + h2 {
+  margin: 1.4rem -16px 0.5rem -16px;
+  padding: 1.4em 1em 0;
+  border-top: 1px solid var(--gray-border);
+}
+article h2,
+article h3 {
+  margin-bottom: 0.5rem;
+}
+article input[type="text"],
+article input[type="email"],
+article input[type="password"],
+article input[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 0.8em;
+  font-size: 0.8em;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+article input[type="text"],
+article input[type="email"],
+article input[type="password"] {
+  margin-bottom: 1em;
+}
+article input[type="submit"] {
+  background: black;
+  color: white;
+}
+article concrete-button {
+  border-radius: 5px;
+}
+article concrete-button + concrete-button {
+  margin-top: calc(1em - 3px); /* No idea why it needs this hack... */
+}
+article concrete-loading-icon {
+  margin-right: 0.5rem;
+}
+article .error-container {
+  display: none;
+  color: red;
+  margin-bottom: 1em;
+}
+article > .toolbar {
+  position: sticky;
+  top: 60px;
+  display: flex;
+  grid-gap: 18px;
+  margin: -1.5em -1em 1em;
+  padding: 0 1em 3px;
+  border-bottom: 1px solid var(--gray-border);
+  background: white;
+  z-index: 1;
+}
+article > .toolbar > * {
+  flex: auto;
+  height: 50px;
+}
+article > .toolbar > button {
+  background: transparent;
+  border-radius: 5px;
+  opacity: 0.7;
+}
+article > .toolbar > div {
+  padding: 0.8em;
+  text-align: center;
+}
+.loading-icon {
+  margin-bottom: -1px;
+  margin-right: 5px;
+}
+h1 .loading-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.loading-zone {
+  position: fixed;
+  top: calc(80px + 1em);
+  right: 0;
+  left: 0;
+  width: 100vw;
+  z-index: -1;
+  text-align: center;
+  display: none;
+}
+
+dialog {
+  top: 1em;
+  width: 100%;
+  margin: 0 auto;
+  border: 0;
+  background: transparent;
+  transition: transform 0.25s ease;
+  transform: translate(0, -100vh);
+}
+dialog > article {
+  background: white;
+}
+.dialog-close-button {
+  float: right;
+  background: 0;
+  border: 0;
+}
+.dialog-content {
+  max-height: 76vh;
+  overflow: auto;
+}
+
+concrete-popover {
+  font-family: system-ui, sans-serif;
+  font-weight: normal;
+}
+

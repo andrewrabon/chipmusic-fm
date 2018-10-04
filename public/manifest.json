@@ -1,5 +1,5 @@
 {
-  "short_name": "ChipMusic",
+  "short_name": "ChipMusic.fm",
   "name": "ChipMusic.fm",
   "background_color": "white",
   "theme_color": "black",
@@ -27,7 +27,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/index.html",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait"
 }
