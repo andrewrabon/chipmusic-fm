@@ -52,6 +52,7 @@ export class MusicPlayer extends HTMLElement {
         @media screen and (min-width: 600px) {
           .music-controls {
             width: 500px;
+            height: 100px;
             margin: 1rem auto;
             border-radius: 5px;
           }
@@ -63,13 +64,13 @@ export class MusicPlayer extends HTMLElement {
           <button class="music-controls__button">
             <i class="material-icons">cloud_download</i>
           </button>
-          <button class="music-controls__button">
+          <button class="music-controls__previous music-controls__button">
             <i class="material-icons">skip_previous</i>
           </button>
           <button class="music-controls__button">
             <i class="material-icons">play_circle_filled</i>
           </button>
-          <button class="music-controls__button">
+          <button class="music-controls__next music-controls__button">
             <i class="material-icons">skip_next</i>
           </button>
           <button class="music-controls__button">
@@ -78,6 +79,29 @@ export class MusicPlayer extends HTMLElement {
         </div>
       </div>
     `;
+
+    this.querySelector('.music-controls__previous').addEventListener('click', () => this.playPrevious());
+    this.querySelector('.music-controls__next').addEventListener('click', () => this.playNext());
+  }
+
+  getSong() {
+    return {
+      link:'https://google.com',
+      title: 'Speedcore... (LSDJ Speedcore)',
+      artist: 'A Versus B',
+      listenCount: Math.floor(Math.random() * Math.floor(1000)),
+      likeCount: 0,
+    };
+  }
+
+  playNext() {
+    const nextEvent = new CustomEvent('next', { detail: { song: this.getSong() } });
+    this.dispatchEvent(nextEvent);
+  }
+
+  playPrevious() {
+    const nextEvent = new CustomEvent('previous', { detail: { song: this.getSong() } });
+    this.dispatchEvent(nextEvent);
   }
 }
 

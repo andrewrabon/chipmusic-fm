@@ -1,29 +1,33 @@
-import { Navigator } from './components/Navigator.js';
-import { HistoryDialog } from './components/HistoryDialog';
-import { LikesDialog } from './components/LikesDialog';
-import { SettingsDialog } from './components/SettingsDialog';
+import { AboutDialog } from './components/AboutDialog.js';
+import { HistoryDialog } from './components/HistoryDialog.js';
+import { LikesDialog } from './components/LikesDialog.js';
+import { LoginDialog } from './components/LoginDialog.js';
+import { LogoutDialog } from './components/LogoutDialog.js';
+import { RegisterDialog } from './components/RegisterDialog.js';
+import { SettingsDialog } from './components/SettingsDialog.js';
 import { ConcretePopover } from '../../node_modules/concrete-elements/src/elements/ConcretePopover.js';
+import { HomeScreen } from './components/HomeScreen.js';
 
-const navigateToAppropriateScreen = () => {
-  const urlParts = window.location.pathname.split('/');
-  if (urlParts[1] === '') {
-    Navigator.navigateToScreen('home');
-  } else {
-    Navigator.navigateToScreen(urlParts[1], urlParts[2]);
-  }
-};
-
-window.onpopstate = (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-  navigateToAppropriateScreen();
-};
+let user = firebase.auth().currentUser;
 
 const userButton = document.getElementById('user-button');
 userButton.addEventListener('click', (event) => {
   event.stopPropagation();
-  const userPopover = new ConcretePopover({
-    items: [
+  let popoverItems = [
+    {
+      title: 'Login',
+      onClick: () => new LoginDialog(),
+    }, {
+      title: 'Register',
+      onClick: () => new RegisterDialog(),
+    }, {
+      title: 'About',
+      onClick: () => new AboutDialog(),
+    },
+  ];
+
+  if (user) {
+    popoverItems = [
       {
         title: 'Likes',
         onClick: () => new LikesDialog(),
@@ -34,12 +38,26 @@ userButton.addEventListener('click', (event) => {
         title: 'Settings',
         onClick: () => new SettingsDialog(),
       }, {
+        title: 'About',
+        onClick: () => new AboutDialog(),
+      }, {
         title: 'Logout',
-        onClick: () => Navigator.navigateToScreen('logout'),
+        onClick: () => new LogoutDialog(),
       },
-    ],
-  });
-  userButton.after(userPopover);
+    ];
+  }
+  userButton.after(new ConcretePopover({
+    items: popoverItems,
+  }));
 });
 
-navigateToAppropriateScreen();
+// Checks the user's login info.
+firebase.auth().onAuthStateChanged(changedUser => {
+  if (changedUser) {
+    user = changedUser;
+  } else {
+    user = firebase.auth().currentUser;
+  }
+});
+
+document.querySelector('main').appendChild(new HomeScreen());

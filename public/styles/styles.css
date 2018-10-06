@@ -1,3 +1,13 @@
 #user-button {
   visibility: visible;
 }
+
+main > * {
+  transition: none;
+}
+
+.login-register-link {
+  display: block;
+  margin-top: 1rem;
+  text-align: center;
+}

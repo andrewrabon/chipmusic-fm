@@ -1,41 +1,69 @@
 import { SongCard } from './SongCard.js';
 import './MusicPlayer.js';
+import { MusicPlayer } from './MusicPlayer.js';
+import { resolve } from 'path';
 
 export class HomeScreen extends HTMLElement {
   constructor() {
     super();
-    this.currentSong = null;
+    this.songCard = null;
     this.playerCanPlay = false;
     this.songHistory = [];
-
+    this.isTransitioning = false;
   }
+
   connectedCallback() {
     this.innerHTML = `
       <div class="home-screen__song-container"></div>
-      <music-player />
     `;
 
-    this.goToNextSong();
+    const musicPlayer = new MusicPlayer();
+    musicPlayer.addEventListener('previous', (event) => this.goToPreviousSong(event.detail.song));
+    musicPlayer.addEventListener('next', (event) => this.goToNextSong(event.detail.song));
+    this.appendChild(musicPlayer);
+
+    musicPlayer.playNext();
   }
 
-  async goToNextSong() {
-    const song = {
-      link:'https://google.com',
-      title: 'Speedcore... (LSDJ Speedcore)',
-      artist: 'A Versus B',
-      listenCount: 0,
-      likeCount: 0,
+  buildSongCard(song, isPreviousSong) {
+    const onResolved = () => {
+      this.songCard = new SongCard({
+        href: song.link,
+        songTitle: song.title,
+        songArtist: song.artist,
+        listenCount: song.listenCount,
+        likeCount: song.likeCount,
+      });
+      this.querySelector('.home-screen__song-container').appendChild(this.songCard);
     };
-    this.currentSong = new SongCard({
-      href: song.link,
-      songTitle: song.title,
-      songArtist: song.artist,
-      playCount: song.listenCount,
-      likeCount: song.likeCount,
+
+    return new Promise((resolve) => {
+      const previousSongCard = this.querySelector('.song-card');
+      if (previousSongCard) {
+        const transformValue = isPreviousSong ? '100vw' : '-100vw';
+        previousSongCard.style.transform = `translate(${transformValue})`;
+
+        // Make up for the animation time.
+        setTimeout(() => {
+          previousSongCard.parentElement.remove();
+          onResolved();
+          resolve();
+        }, 300);
+      } else {
+        onResolved();
+        resolve();
+      }
     });
-    const container = this.querySelector('.home-screen__song-container');
-    container.innerHTML = '';
-    container.appendChild(this.currentSong);
+  }
+
+  async goToPreviousSong(song) {
+    await this.buildSongCard(song, true);
+    this.songCard.enterFromLeft();
+  }
+
+  async goToNextSong(song) {
+    await this.buildSongCard(song);
+    this.songCard.enterFromRight();
   }
 }
 
