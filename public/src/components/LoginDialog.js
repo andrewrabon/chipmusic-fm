@@ -1,5 +1,5 @@
-import { ConcreteButton } from  '../../../node_modules/concrete-elements/src/elements/ConcreteButton.js';
-import { ConcreteDialog } from  '../../../node_modules/concrete-elements/src/elements/ConcreteDialog.js';
+import '../../../node_modules/concrete-elements/src/elements/ConcreteButton.js';
+import { ConcreteDialog } from '../../../node_modules/concrete-elements/src/elements/ConcreteDialog.js';
 import { RegisterDialog } from './RegisterDialog.js';
 
 export class LoginDialog extends ConcreteDialog {

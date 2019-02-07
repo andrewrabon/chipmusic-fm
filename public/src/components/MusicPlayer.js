@@ -84,9 +84,9 @@ export class MusicPlayer extends HTMLElement {
     this.querySelector('.music-controls__next').addEventListener('click', () => this.playNext());
   }
 
-  getSong() {
+  static getSong() {
     return {
-      link:'https://google.com',
+      link: 'https://google.com',
       title: 'Speedcore... (LSDJ Speedcore)',
       artist: 'A Versus B',
       listenCount: Math.floor(Math.random() * Math.floor(1000)),
@@ -95,12 +95,12 @@ export class MusicPlayer extends HTMLElement {
   }
 
   playNext() {
-    const nextEvent = new CustomEvent('next', { detail: { song: this.getSong() } });
+    const nextEvent = new window.CustomEvent('next', { detail: { song: MusicPlayer.getSong() } });
     this.dispatchEvent(nextEvent);
   }
 
   playPrevious() {
-    const nextEvent = new CustomEvent('previous', { detail: { song: this.getSong() } });
+    const nextEvent = new window.CustomEvent('previous', { detail: { song: MusicPlayer.getSong() } });
     this.dispatchEvent(nextEvent);
   }
 }

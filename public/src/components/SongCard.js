@@ -73,13 +73,13 @@ export class SongCard extends HTMLElement {
   }
 
   async getGif() {
-    const API_KEY = 't0Op5B0QkoHsaGndTQdmx5blXoWBscSm';
-    const GIPHY_URL = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=pixel art`;
+    // const API_KEY = 't0Op5B0QkoHsaGndTQdmx5blXoWBscSm';
+    // const GIPHY_URL = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=pixel art`;
     // const response = await fetch(GIPHY_URL);
     // const gifs = await response.json();
     const container = this.querySelector('.song-card');
     // container.style.backgroundImage = `url('${gifs.data.image_url}')`;
-    container.style.backgroundImage = `url('https://media1.giphy.com/media/TRebCjNbc4dIA/giphy.gif?cid=3640f6095bb9a4d27037483763245fdb')`;
+    container.style.backgroundImage = 'url(\'https://media1.giphy.com/media/TRebCjNbc4dIA/giphy.gif?cid=3640f6095bb9a4d27037483763245fdb\')';
   }
 
   enterFromSide(isFromLeft) {
@@ -103,6 +103,6 @@ export class SongCard extends HTMLElement {
   enterFromRight() {
     return this.enterFromSide();
   }
-};
+}
 
 window.customElements.define('song-card', SongCard);

@@ -52,7 +52,7 @@ userButton.addEventListener('click', (event) => {
 });
 
 // Checks the user's login info.
-firebase.auth().onAuthStateChanged(changedUser => {
+firebase.auth().onAuthStateChanged((changedUser) => {
   if (changedUser) {
     user = changedUser;
   } else {

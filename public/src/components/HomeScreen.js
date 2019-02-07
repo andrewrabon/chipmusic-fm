@@ -1,7 +1,5 @@
 import { SongCard } from './SongCard.js';
-import './MusicPlayer.js';
 import { MusicPlayer } from './MusicPlayer.js';
-import { resolve } from 'path';
 
 export class HomeScreen extends HTMLElement {
   constructor() {
@@ -18,8 +16,8 @@ export class HomeScreen extends HTMLElement {
     `;
 
     const musicPlayer = new MusicPlayer();
-    musicPlayer.addEventListener('previous', (event) => this.goToPreviousSong(event.detail.song));
-    musicPlayer.addEventListener('next', (event) => this.goToNextSong(event.detail.song));
+    musicPlayer.addEventListener('previous', event => this.goToPreviousSong(event.detail.song));
+    musicPlayer.addEventListener('next', event => this.goToNextSong(event.detail.song));
     this.appendChild(musicPlayer);
 
     musicPlayer.playNext();

@@ -1,4 +1,4 @@
-import { ConcreteDialog } from  '../../../node_modules/concrete-elements/src/elements/ConcreteDialog.js';
+import { ConcreteDialog } from '../../../node_modules/concrete-elements/src/elements/ConcreteDialog.js';
 
 export class SettingsDialog extends ConcreteDialog {
   async connectedCallback() {
