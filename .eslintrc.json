@@ -1,0 +1,39 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "airbnb",
+    "plugin:jsdoc/recommended"
+  ],
+  "globals": {
+    "Event": true,
+    "Headers": true,
+    "HTMLElement": true,
+    "document": true,
+    "fetch": true,
+    "google": true,
+    "window": true
+  },
+  "rules": {
+    "import/prefer-default-export": [0],
+    "import/no-default-export": [1],
+    "react/jsx-filename-extension": [0]
+  },
+  "env": {
+    "es6": true,
+    "browser": true
+  },
+  "plugins": [
+    "react",
+    "jsdoc"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    }
+  }
+}
