@@ -4,6 +4,12 @@ var plugins = [{
     },{
       plugin: require('/home/andrewrabon/Code/chipmusic-fm/node_modules/gatsby-plugin-manifest/gatsby-ssr'),
       options: {"plugins":[],"name":"ChipMusic.fm","short_name":"ChipMusic.fm","start_url":"/","background_color":"#000000","theme_color":"#000000","display":"minimal-ui","icon":"src/images/gatsby-icon.png"},
+    },{
+      plugin: require('/home/andrewrabon/Code/chipmusic-fm/node_modules/gatsby-plugin-offline/gatsby-ssr'),
+      options: {"plugins":[]},
+    },{
+      plugin: require('/home/andrewrabon/Code/chipmusic-fm/node_modules/gatsby-plugin-prefetch-google-fonts/gatsby-ssr'),
+      options: {"plugins":[],"fonts":[{"family":"Josefin Sans","variants":["bold","italic"]},{"family":"Roboto","subsets":["latin"]}],"display":"swap"},
     }]
 // During bootstrap, we write requires at top of this file which looks like:
 // var plugins = [
