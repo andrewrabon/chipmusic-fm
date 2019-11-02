@@ -4,3 +4,7 @@ node_modules
 .firebaserc
 .log
 firebase-debug.log
+
+# Gatsby
+.cache/
+public/
