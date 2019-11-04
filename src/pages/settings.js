@@ -1,27 +1,16 @@
 import React from 'react';
+import { App } from 'components/App';
+import { SEO } from 'components/SEO';
 
-import { Layout } from '../components/layout';
-import { SEO } from '../components/seo';
-
-const SettingsPage = () => (
-  <Layout>
+const Settings = () => (
+  <>
     <SEO title="Settings" />
-    <article className="page">
-      <ul className="page__tabs">
-        <li className="page-tab--selected"><a href="/settings">Settings</a></li>
-        <li><a href="/likes">Likes</a></li>
-        <li><a href="/history">History</a></li>
-        <li><a href="/about">About</a></li>
-      </ul>
-      <div className="page__content">
-        Hello, world.
-      </div>
-    </article>
-  </Layout>
+    <App page="settings" />
+  </>
 );
 
-export { SettingsPage };
+export { Settings };
 
 // This file needs to export a default for Gatsby to work.
 /* eslint import/no-default-export: [0] */
-export default SettingsPage;
+export default Settings;
