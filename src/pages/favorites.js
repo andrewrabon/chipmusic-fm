@@ -5,7 +5,7 @@ import { SEO } from 'components/SEO';
 const Favorites = () => (
   <>
     <SEO title="Favorites" />
-    <App page="favorites" />
+    <App pageId="favorites" />
   </>
 );
 

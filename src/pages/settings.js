@@ -5,7 +5,7 @@ import { SEO } from 'components/SEO';
 const Settings = () => (
   <>
     <SEO title="Settings" />
-    <App page="settings" />
+    <App pageId="settings" />
   </>
 );
 

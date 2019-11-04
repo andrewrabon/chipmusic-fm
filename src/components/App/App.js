@@ -41,17 +41,47 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: props.page,
+      currentPageId: props.pageId,
+      navigationGlyph: 'account_circle',
+      navigationLink: '/login',
     };
+    this.onNavigationClick = this.onNavigationClick.bind(this);
+  }
+
+  onNavigationClick(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const { currentPageId } = this.state;
+    let pageId = 'index';
+    const isLoggedIn = true;
+    if (currentPageId === 'index') {
+      if (isLoggedIn) {
+        pageId = 'favorites';
+      } else {
+        pageId = 'login';
+      }
+    }
+
+    let navigationGlyph = 'account_circle';
+    let navigationLink = '/login'; // TODO: Make constants.
+    if (pageId !== 'index') {
+      navigationGlyph = 'home';
+      navigationLink = '/';
+    }
+    this.setState({
+      currentPageId: pageId,
+      navigationGlyph,
+      navigationLink,
+    });
   }
 
   render() {
-    const { currentPage } = this.state;
+    const { currentPageId, navigationGlyph, navigationLink } = this.state;
     const isLoggedIn = true;
 
     let layoutClassName;
     let content;
-    if (currentPage === 'index') {
+    if (currentPageId === 'index') {
       layoutClassName = 'layout-song';
       content = (
         <SongCredits
@@ -72,7 +102,12 @@ class App extends Component {
     return (
       <article className={layoutClassName}>
         {content}
-        <Navigation page={currentPage} />
+        <Navigation
+          glyph={navigationGlyph}
+          link={navigationLink}
+          page={currentPageId}
+          onClick={this.onNavigationClick}
+        />
         <Player />
       </article>
     );

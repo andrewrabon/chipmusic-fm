@@ -5,7 +5,7 @@ import { SEO } from 'components/SEO';
 const Index = () => (
   <>
     <SEO title="Home" />
-    <App page="index" />
+    <App pageId="index" />
   </>
 );
 
