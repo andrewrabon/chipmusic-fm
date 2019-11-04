@@ -1,0 +1,18 @@
+.tabbed-container {
+  display: flex;
+  margin-bottom: 2rem;
+  font-family: 'Josefin Sans';
+  font-size: 1.5rem;
+  list-style: none;
+}
+.tabbed-container > li {
+  flex: 1;
+  max-width: 25%;
+  padding: 0 1rem 1rem;
+  text-align: center;
+  border-bottom: 3px solid #eee;
+  line-height: 1.25;
+}
+.tabbed-container > li.tabbed-container--selected {
+  border-bottom-color: black;
+}

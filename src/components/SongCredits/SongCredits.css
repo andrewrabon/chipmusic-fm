@@ -1,0 +1,9 @@
+.song-credits {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  color: white;
+  text-shadow: 2px 2px 2px black;
+  font-family: 'Josefin Sans';
+  font-weight: bold;
+}
