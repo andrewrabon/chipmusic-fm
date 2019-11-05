@@ -81,6 +81,7 @@ class App extends Component {
 
     let layoutClassName;
     let content;
+    let hasInvertedColors = false;
     if (currentPageId === 'index') {
       layoutClassName = 'layout-song';
       content = (
@@ -93,6 +94,7 @@ class App extends Component {
       );
     } else {
       layoutClassName = 'layout-page';
+      hasInvertedColors = true;
       if (isLoggedIn) {
         content = (<TabbedContainer tabs={ACCOUNT_TABS} />);
       } else {
@@ -100,16 +102,19 @@ class App extends Component {
       }
     }
     return (
-      <article className={layoutClassName}>
-        {content}
+      <>
+        <div className={layoutClassName}>
+          {content}
+        </div>
         <Navigation
           glyph={navigationGlyph}
+          hasInvertedColors={hasInvertedColors}
           link={navigationLink}
           page={currentPageId}
           onClick={this.onNavigationClick}
         />
         <Player />
-      </article>
+      </>
     );
   }
 }

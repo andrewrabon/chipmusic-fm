@@ -4,3 +4,6 @@
   right: 2rem;
   color: white;
 }
+.navigation-button--inverted {
+  color: black;
+}
