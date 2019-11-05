@@ -34,7 +34,7 @@ class TabbedContainer extends Component {
               const selectedClassName = tab.id === currentTabId ? 'tabbed-container--selected' : '';
               return (
                 <li className={selectedClassName}>
-                  <button type="button" onClick={this.onTabClick} data-index={index}>
+                  <button className="tabbed-container__tab" type="button" onClick={this.onTabClick} data-index={index}>
                     {tab.display}
                   </button>
                 </li>

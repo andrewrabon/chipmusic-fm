@@ -3,6 +3,9 @@
   top: 2rem;
   right: 2rem;
   color: white;
+  border: 0;
+  background: 0;
+  cursor: pointer;
 }
 .navigation-button--inverted {
   color: black;

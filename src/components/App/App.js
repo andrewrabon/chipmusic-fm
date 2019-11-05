@@ -40,10 +40,10 @@ const LOGIN_TABS = [
 class App extends Component {
   constructor(props) {
     super(props);
+    const { pageId } = props;
     this.state = {
-      currentPageId: props.pageId,
+      currentPageId: pageId,
       navigationGlyph: 'account_circle',
-      navigationLink: '/login',
     };
     this.onNavigationClick = this.onNavigationClick.bind(this);
   }
@@ -63,20 +63,17 @@ class App extends Component {
     }
 
     let navigationGlyph = 'account_circle';
-    let navigationLink = '/login'; // TODO: Make constants.
     if (pageId !== 'index') {
       navigationGlyph = 'home';
-      navigationLink = '/';
     }
     this.setState({
       currentPageId: pageId,
       navigationGlyph,
-      navigationLink,
     });
   }
 
   render() {
-    const { currentPageId, navigationGlyph, navigationLink } = this.state;
+    const { currentPageId, navigationGlyph } = this.state;
     const isLoggedIn = true;
 
     let layoutClassName;
@@ -109,8 +106,6 @@ class App extends Component {
         <Navigation
           glyph={navigationGlyph}
           hasInvertedColors={hasInvertedColors}
-          link={navigationLink}
-          page={currentPageId}
           onClick={this.onNavigationClick}
         />
         <Player />
