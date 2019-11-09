@@ -1,12 +1,13 @@
 import React from 'react';
 import { App } from 'components/App';
+import { Firebase, FirebaseContext } from 'components/Firebase';
 import { SEO } from 'components/SEO';
 
 const Index = () => (
-  <>
+  <FirebaseContext.Provider value={new Firebase()}>
     <SEO title="Home" />
     <App pageId="index" />
-  </>
+  </FirebaseContext.Provider>
 );
 
 export { Index };

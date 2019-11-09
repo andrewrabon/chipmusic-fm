@@ -4,6 +4,7 @@
   "version": "2.0.0",
   "author": "Andrew Rabon <andrewrabon@gmail.com>",
   "dependencies": {
+    "firebase": "^7.3.0",
     "gatsby": "^2.17.6",
     "gatsby-image": "^2.2.30",
     "gatsby-plugin-manifest": "^2.2.25",

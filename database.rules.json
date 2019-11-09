@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "music": {
+      "songs": {
+        "$songId": {
+          "listenCount": {
+            ".write": true
+          },
+          "likeCount": {
+            ".write": "auth != null"
+          }
+        }
+      },
+      ".read": true
+    },
+    "userSettings": {
+      "$userId": {
+        ".read": "auth != null && $userId == auth.uid",
+        ".write": "auth != null && $userId == auth.uid"
+      }
+    }
+  }
+}

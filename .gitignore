@@ -1,9 +1,11 @@
 
+.env
 .DS_Store
 node_modules
 .firebaserc
 .log
 firebase-debug.log
+package-lock.json
 
 # Gatsby
 .cache/
