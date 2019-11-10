@@ -38,12 +38,12 @@ export class App extends Component {
 
   render() {
     const { currentPageId } = this.state;
-    let layoutClassName = 'layout-song';
     let hasInvertedColors = false;
+    let layoutClassName = 'layout-song';
     let navigationGlyph = 'account_circle';
     if (currentPageId !== 'index') {
-      layoutClassName = 'layout-page';
       hasInvertedColors = true;
+      layoutClassName = 'layout-page';
       navigationGlyph = 'home';
     }
     return (

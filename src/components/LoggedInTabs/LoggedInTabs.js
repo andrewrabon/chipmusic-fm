@@ -1,5 +1,6 @@
 import React from 'react';
 import { TabbedContainer } from 'components/TabbedContainer';
+import { AboutFragment } from 'fragments/AboutFragment';
 
 const ACCOUNT_TABS = [
   {
@@ -17,7 +18,7 @@ const ACCOUNT_TABS = [
   }, {
     id: 'about',
     display: 'About',
-    child: (<div>About</div>),
+    child: <AboutFragment />,
   },
 ];
 
