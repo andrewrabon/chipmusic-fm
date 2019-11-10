@@ -1,12 +1,8 @@
 import React from 'react';
-import { App } from 'components/App';
-import { SEO } from 'components/SEO';
+import { Layout } from 'components/Layout';
 
 const Settings = () => (
-  <>
-    <SEO title="Settings" />
-    <App pageId="settings" />
-  </>
+  <Layout title="Settings" pageId="settings" />
 );
 
 export { Settings };

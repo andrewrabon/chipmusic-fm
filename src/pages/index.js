@@ -1,16 +1,8 @@
 import React from 'react';
-import firebase from 'firebase';
-import 'firebase/auth';
-import 'firebase/database';
-import { App } from 'components/App';
-import { getFirebase, FirebaseContext } from 'components/Firebase';
-import { SEO } from 'components/SEO';
+import { Layout } from 'components/Layout';
 
 const Index = () => (
-  <FirebaseContext.Provider value={getFirebase(firebase)}>
-    <SEO title="Home" />
-    <App pageId="index" />
-  </FirebaseContext.Provider>
+  <Layout title="Home" pageId="index" />
 );
 
 export { Index };

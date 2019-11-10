@@ -1,59 +1,28 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { AuthUserContext } from 'components/Firebase';
 import { Navigation } from 'components/Navigation';
 import { Player } from 'components/Player';
 import { SongCredits } from 'components/SongCredits';
-import { TabbedContainer } from 'components/TabbedContainer';
+import { LoggedInTabs } from 'components/LoggedInTabs';
+import { LoggedOutTabs } from 'components/LoggedOutTabs';
 import './App.css';
 
-const ACCOUNT_TABS = [
-  {
-    id: 'favorites',
-    display: 'Favorites',
-    child: (<div>Favorites</div>),
-  }, {
-    id: 'history',
-    display: 'History',
-    child: (<div>History</div>),
-  }, {
-    id: 'settings',
-    display: 'Settings',
-    child: (<div>Settings</div>),
-  }, {
-    id: 'about',
-    display: 'About',
-    child: (<div>About</div>),
-  },
-];
-
-const LOGIN_TABS = [
-  {
-    id: 'login',
-    display: 'Login',
-    child: (<div>Login</div>),
-  }, {
-    id: 'register',
-    display: 'Register',
-    child: (<div>Register</div>),
-  },
-];
-
-class App extends Component {
+export class App extends Component {
   constructor(props) {
     super(props);
     const { pageId } = props;
     this.state = {
       currentPageId: pageId,
-      navigationGlyph: 'account_circle',
     };
     this.onNavigationClick = this.onNavigationClick.bind(this);
   }
 
-  onNavigationClick(event) {
+  onNavigationClick(event, isLoggedIn) {
     event.stopPropagation();
     event.preventDefault();
     const { currentPageId } = this.state;
     let pageId = 'index';
-    const isLoggedIn = true;
     if (currentPageId === 'index') {
       if (isLoggedIn) {
         pageId = 'favorites';
@@ -62,56 +31,52 @@ class App extends Component {
       }
     }
 
-    let navigationGlyph = 'account_circle';
-    if (pageId !== 'index') {
-      navigationGlyph = 'home';
-    }
     this.setState({
       currentPageId: pageId,
-      navigationGlyph,
     });
   }
 
   render() {
-    const { currentPageId, navigationGlyph } = this.state;
-    const isLoggedIn = true;
-
-    let layoutClassName;
-    let content;
+    const { currentPageId } = this.state;
+    let layoutClassName = 'layout-song';
     let hasInvertedColors = false;
-    if (currentPageId === 'index') {
-      layoutClassName = 'layout-song';
-      content = (
-        <SongCredits
-          artist="Artist"
-          title="Song Title"
-          playCount={95}
-          favoriteCount={91}
-        />
-      );
-    } else {
+    let navigationGlyph = 'account_circle';
+    if (currentPageId !== 'index') {
       layoutClassName = 'layout-page';
       hasInvertedColors = true;
-      if (isLoggedIn) {
-        content = (<TabbedContainer tabs={ACCOUNT_TABS} />);
-      } else {
-        content = (<TabbedContainer tabs={LOGIN_TABS} />);
-      }
+      navigationGlyph = 'home';
     }
     return (
-      <>
-        <div className={layoutClassName}>
-          {content}
-        </div>
-        <Navigation
-          glyph={navigationGlyph}
-          hasInvertedColors={hasInvertedColors}
-          onClick={this.onNavigationClick}
-        />
-        <Player />
-      </>
+      <AuthUserContext.Consumer>
+        {(authUser) => (
+          <>
+            <div className={layoutClassName}>
+              {currentPageId === 'index' ? (
+                <SongCredits
+                  artist="Artist"
+                  title="Song Title"
+                  playCount={95}
+                  favoriteCount={91}
+                />
+              ) : [(authUser !== null ? (
+                <LoggedInTabs selectedTab={currentPageId} />
+              ) : (
+                <LoggedOutTabs selectedTab={currentPageId} />
+              ))]}
+            </div>
+            <Navigation
+              glyph={navigationGlyph}
+              hasInvertedColors={hasInvertedColors}
+              onClick={(event) => this.onNavigationClick(event, authUser !== null)}
+            />
+            <Player />
+          </>
+        )}
+      </AuthUserContext.Consumer>
     );
   }
 }
 
-export { App };
+App.propTypes = {
+  pageId: PropTypes.string.isRequired,
+};

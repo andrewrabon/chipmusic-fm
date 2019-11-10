@@ -1,12 +1,8 @@
 import React from 'react';
-import { App } from 'components/App';
-import { SEO } from 'components/SEO';
+import { Layout } from 'components/Layout';
 
 const Favorites = () => (
-  <>
-    <SEO title="Favorites" />
-    <App pageId="favorites" />
-  </>
+  <Layout title="Favorites" pageId="favorites" />
 );
 
 export { Favorites };
