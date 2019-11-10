@@ -1,40 +1,40 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './TabbedContainer.css';
 
-class TabbedContainer extends Component {
+export class TabbedContainer extends Component {
   constructor(props) {
     super(props);
     const { tabs } = props;
     this.state = {
-      currentTabId: 0,
+      currentTabIndex: 0,
       currentTabChild: tabs[0].child,
     };
     this.onTabClick = this.onTabClick.bind(this);
   }
 
-  onTabClick(event) {
-    const { id } = event.currentTarget.dataset;
+  onTabClick(event, index) {
     const { tabs } = this.props;
     const { child } = tabs[index];
     this.setState({
-      currentTabId: id,
-      currentTabChid: child,
+      currentTabIndex: index,
+      currentTabChild: child,
     });
   }
 
   render() {
     const { tabs } = this.props;
-    const { currentTabId, currentTabChild } = this.state;
+    const { currentTabIndex, currentTabChild } = this.state;
 
     return (
       <>
         <ul className="tabbed-container">
           {
             tabs.map((tab, index) => {
-              const selectedClassName = tab.id === currentTabId ? 'tabbed-container--selected' : '';
+              const selectedClassName = index === currentTabIndex ? 'tabbed-container--selected' : '';
               return (
-                <li className={selectedClassName}>
-                  <button className="tabbed-container__tab" type="button" onClick={this.onTabClick} data-index={index}>
+                <li className={selectedClassName} key={tab.id}>
+                  <button className="tabbed-container__tab" type="button" onClick={(event) => this.onTabClick(event, index)}>
                     {tab.display}
                   </button>
                 </li>
@@ -50,4 +50,6 @@ class TabbedContainer extends Component {
   }
 }
 
-export { TabbedContainer };
+TabbedContainer.propTypes = {
+  tabs: PropTypes.arrayOf(PropTypes.any).isRequired,
+};
