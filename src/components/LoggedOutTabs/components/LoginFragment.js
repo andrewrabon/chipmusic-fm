@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { withFirebase } from 'components/Firebase';
+import { logger } from 'utils/logger';
 
 const LoginFragment = (props) => {
   const { firebase } = props;
@@ -9,7 +10,7 @@ const LoginFragment = (props) => {
   const submit = (event) => {
     event.preventDefault();
     firebase.doSignInWithEmailAndPassword(email, password)
-      .catch(() => console.error('Invalid email or password'));
+      .catch(() => logger.error('Invalid email or password'));
   };
   return (
     <form onSubmit={submit}>

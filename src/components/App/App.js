@@ -54,14 +54,15 @@ export class App extends Component {
               {currentPageId === 'index' ? (
                 <SongCredits
                   artist="Artist"
-                  title="Song Title"
-                  playCount={95}
                   favoriteCount={91}
+                  key="songCredits"
+                  playCount={95}
+                  title="Song Title"
                 />
               ) : [(authUser !== null ? (
-                <LoggedInTabs selectedTab={currentPageId} />
+                <LoggedInTabs key="loggedInTabs" selectedTab={currentPageId} />
               ) : (
-                <LoggedOutTabs selectedTab={currentPageId} />
+                <LoggedOutTabs key="loggedOutTabs" selectedTab={currentPageId} />
               ))]}
             </div>
             <Navigation
