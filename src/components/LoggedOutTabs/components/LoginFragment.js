@@ -16,17 +16,21 @@ const LoginFragment = (props) => {
     <form onSubmit={submit}>
       <input
         name="email"
+        onChange={(event) => setEmail(event.target.value)}
+        placeholder="Email address"
+        required
         type="email"
         value={email}
-        onChange={(event) => setEmail(event.target.value)}
       />
       <input
         name="password"
+        onChange={(event) => setPassword(event.target.value)}
+        placeholder="Password"
+        required
         type="password"
         value={password}
-        onChange={(event) => setPassword(event.target.value)}
       />
-      <button type="button" onClick={submit}>Login</button>
+      <button type="submit" onClick={submit}>Login</button>
     </form>
   );
 };

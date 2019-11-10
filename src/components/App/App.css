@@ -17,6 +17,49 @@ h3 {
   font-size: 1.5rem;
   line-height: 1.25;
 }
+form input.input-error,
+form input.input-error:hover,
+form input.input-error:focus {
+  border-color: red !important;
+}
+form button,
+form input[type="submit"],
+form input[type="email"],
+form input[type="text"],
+form input[type="password"] {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+form input[type="email"],
+form input[type="text"],
+form input[type="password"] {
+  padding: 0.5rem;
+  border: 3px solid #eee;
+  background: #eee;
+  padding: 0.5rem;
+}
+form input[type="email"]:hover,
+form input[type="text"]:hover,
+form input[type="password"]:hover,
+form input[type="email"]:focus,
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+  border-color: black;
+}
+form button {
+  padding: 0.7645rem 0.5rem;
+  border: 0;
+  background: black;
+  color: white;
+  height: auto;
+  cursor: pointer;
+}
+input + input,
+input + button {
+  margin-top: 1.5rem;
+}
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;

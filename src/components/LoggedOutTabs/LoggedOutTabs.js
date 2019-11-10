@@ -1,20 +1,21 @@
 import React from 'react';
 import { TabbedContainer } from 'components/TabbedContainer';
 import { LoginFragment } from './components/LoginFragment';
+import { RegisterFragment } from './components/RegisterFragment';
 
 const LOGIN_TABS = [
   {
     id: 'login',
     display: 'Login',
-    child: (<LoginFragment />),
+    child: <LoginFragment />,
   }, {
     id: 'register',
     display: 'Register',
-    child: (<div>Register</div>),
+    child: <RegisterFragment />,
   }, {
     id: 'about',
     display: 'About',
-    child: (<div>About</div>),
+    child: <div>About</div>,
   },
 ];
 
