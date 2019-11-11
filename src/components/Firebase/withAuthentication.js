@@ -38,17 +38,13 @@ export const withAuthentication = (Component) => {
       if (firebase && !this.hasFirebaseInitialized) {
         this.hasFirebaseInitialized = true;
 
-        this.listener = firebase.onAuthUserListener(
+        this.listener = firebase.auth.onAuthStateChanged(
           (authUser) => {
             localStorage.setItem(
               'authUser',
               JSON.stringify(authUser),
             );
             this.setState({ authUser });
-          },
-          () => {
-            localStorage.removeItem('authUser');
-            this.setState({ authUser: null });
           },
         );
       }

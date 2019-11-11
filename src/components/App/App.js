@@ -37,6 +37,7 @@ export class App extends Component {
   }
 
   render() {
+    const { firebase } = this.props;
     const { currentPageId } = this.state;
     let hasInvertedColors = false;
     let layoutClassName = 'layout-song';

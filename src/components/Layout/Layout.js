@@ -7,26 +7,24 @@ import { App } from 'components/App';
 import { getFirebase, withAuthentication, FirebaseContext } from 'components/Firebase';
 import { SEO } from 'components/SEO';
 
-const ComponentWithAuthentication = withAuthentication(({ children }) => (
-  <>
-    {children}
-  </>
-));
-
-export const Layout = (props) => {
+const AppWithAuthentication = withAuthentication((props) => {
   const {
     title,
     pageId,
   } = props;
   return (
-    <FirebaseContext.Provider value={getFirebase(firebase)}>
-      <ComponentWithAuthentication>
-        <SEO title={title} />
-        <App pageId={pageId} />
-      </ComponentWithAuthentication>
-    </FirebaseContext.Provider>
+    <>
+      <SEO title={title} />
+      <App pageId={pageId} {...props} />
+    </>
   );
-};
+});
+
+export const Layout = (props) => (
+  <FirebaseContext.Provider value={getFirebase(firebase)}>
+    <AppWithAuthentication {...props} />
+  </FirebaseContext.Provider>
+);
 
 Layout.propTypes = {
   title: PropTypes.string.isRequired,
