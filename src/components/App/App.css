@@ -14,8 +14,25 @@ a {
 h1,
 h2,
 h3 {
+  line-height: 2;
+  font-family: 'Josefin Sans';
+}
+h1 {
   font-size: 1.5rem;
-  line-height: 1.25;
+}
+h2 {
+  font-size: 1.25rem;
+}
+h3 {
+  font-size: 1rem;
+}
+p + h1,
+p + h2,
+p + h3 {
+  margin-top: 1.5rem;
+}
+p + p {
+  margin-top: 1rem;
 }
 form input.input-error,
 form input.input-error:hover,
