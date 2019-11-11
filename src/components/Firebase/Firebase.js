@@ -13,8 +13,10 @@ class Firebase {
     if (!app.apps.length) {
       app.initializeApp(config);
     }
-    this.auth = app.auth();
-    this.db = app.database();
+    if (typeof window !== 'undefined') {
+      this.auth = app.auth();
+      this.db = app.database();
+    }
   }
 
   doCreateUserWithEmailAndPassword = (email, password) => this.auth.createUserWithEmailAndPassword(
