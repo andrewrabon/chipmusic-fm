@@ -13,3 +13,16 @@
   font-size: 1.5rem;
   line-height: 1.25;
 }
+.giphy-attribution {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  left: 0;
+  text-align: center;
+}
+.giphy-attribution > a {
+  opacity: 0.5;
+}
+.giphy-attribution > a:hover {
+  opacity: 1.0;
+}

@@ -53,11 +53,11 @@ export class App extends Component {
             <div className={layoutClassName}>
               {currentPageId === 'index' ? (
                 <SongCredits
-                  artist="Artist"
-                  favoriteCount={91}
+                  artist="IAYD"
+                  favoriteCount={6}
                   key="songCredits"
-                  playCount={95}
-                  title="Song Title"
+                  playCount={18}
+                  title="When I Sleep, My Heart Speaks"
                 />
               ) : [(authUser !== null ? (
                 <LoggedInTabs key="loggedInTabs" selectedTab={currentPageId} />

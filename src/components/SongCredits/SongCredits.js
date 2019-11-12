@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import giphy from 'images/giphy.png';
 import './SongCredits.css';
 
-class SongCredits extends Component {
-  render() {
-    const {
-      artist,
-      title,
-      playCount,
-      favoriteCount,
-    } = this.props;
+export const SongCredits = (props) => {
+  const {
+    artist,
+    title,
+    playCount,
+    favoriteCount,
+  } = props;
 
-    return (
-      <a href="/#" className="song-credits">
+  return (
+    <>
+      <a className="song-credits" href="#/" target="_blank">
         <h1>{artist}</h1>
         <h2>
           &ldquo;
@@ -22,15 +23,25 @@ class SongCredits extends Component {
         <h3>
           {playCount}
           {' '}
-          play &middot;
+          plays &middot;
           {' '}
           {favoriteCount}
           {' '}
           favorites
         </h3>
       </a>
-    );
-  }
-}
+      <div className="giphy-attribution">
+        <a href="#/" target="_blank">
+          <img src={giphy} alt="Powered by GIPHY" height="15" />
+        </a>
+      </div>
+    </>
+  );
+};
 
-export { SongCredits };
+SongCredits.propTypes = {
+  artist: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  playCount: PropTypes.number.isRequired,
+  favoriteCount: PropTypes.number.isRequired,
+};
