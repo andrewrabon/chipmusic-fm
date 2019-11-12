@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AuthUserContext } from 'components/Firebase';
-import { Navigation } from 'components/Navigation';
-import { Player } from 'components/Player';
+import { NavigationButton } from 'components/NavigationButton';
 import { SongCredits } from 'components/SongCredits';
+import { SongPlayer } from 'components/SongPlayer';
 import { LoggedInTabs } from 'components/LoggedInTabs';
 import { LoggedOutTabs } from 'components/LoggedOutTabs';
 import './App.css';
@@ -15,10 +15,10 @@ export class App extends Component {
     this.state = {
       currentPageId: pageId,
     };
-    this.onNavigationClick = this.onNavigationClick.bind(this);
+    this.onNavigationButtonClick = this.onNavigationButtonClick.bind(this);
   }
 
-  onNavigationClick(event, isLoggedIn) {
+  onNavigationButtonClick(event, isLoggedIn) {
     event.stopPropagation();
     event.preventDefault();
     const { currentPageId } = this.state;
@@ -65,12 +65,12 @@ export class App extends Component {
                 <LoggedOutTabs key="loggedOutTabs" selectedTab={currentPageId} />
               ))]}
             </div>
-            <Navigation
+            <NavigationButton
               glyph={navigationGlyph}
               hasInvertedColors={hasInvertedColors}
-              onClick={(event) => this.onNavigationClick(event, authUser !== null)}
+              onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
             />
-            <Player />
+            <SongPlayer />
           </>
         )}
       </AuthUserContext.Consumer>

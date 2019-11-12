@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Navigation.css';
+import './NavigationButton.css';
 
-export const Navigation = (props) => {
+export const NavigationButton = (props) => {
   const {
     glyph,
     hasInvertedColors,
@@ -17,7 +17,7 @@ export const Navigation = (props) => {
   );
 };
 
-Navigation.propTypes = {
+NavigationButton.propTypes = {
   glyph: PropTypes.string.isRequired,
   hasInvertedColors: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
