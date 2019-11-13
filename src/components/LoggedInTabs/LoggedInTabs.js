@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { TabbedContainer } from 'components/TabbedContainer';
 import { AboutFragment } from 'fragments/AboutFragment';
 
@@ -22,6 +23,13 @@ const ACCOUNT_TABS = [
   },
 ];
 
-export const LoggedInTabs = () => (
-  <TabbedContainer tabs={ACCOUNT_TABS} />
-);
+export const LoggedInTabs = (props) => {
+  const { selectedTabId } = props;
+  return (
+    <TabbedContainer tabs={ACCOUNT_TABS} selectedTabId={selectedTabId} />
+  );
+};
+
+LoggedInTabs.propTypes = {
+  selectedTabId: PropTypes.string.isRequired,
+};

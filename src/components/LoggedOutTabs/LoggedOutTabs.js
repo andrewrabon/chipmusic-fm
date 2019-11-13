@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { TabbedContainer } from 'components/TabbedContainer';
 import { AboutFragment } from 'fragments/AboutFragment';
 import { LoginFragment } from 'fragments/LoginFragment';
@@ -20,6 +21,13 @@ const LOGIN_TABS = [
   },
 ];
 
-export const LoggedOutTabs = () => (
-  <TabbedContainer tabs={LOGIN_TABS} />
-);
+export const LoggedOutTabs = (props) => {
+  const { selectedTabId } = props;
+  return (
+    <TabbedContainer tabs={LOGIN_TABS} selectedTabId={selectedTabId} />
+  );
+};
+
+LoggedOutTabs.propTypes = {
+  selectedTabId: PropTypes.string.isRequired,
+};

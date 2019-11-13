@@ -5,10 +5,18 @@ import './TabbedContainer.css';
 export class TabbedContainer extends Component {
   constructor(props) {
     super(props);
-    const { tabs } = props;
+    const { tabs, selectedTabId } = props;
+    let currentTabIndex = 0;
+    if (selectedTabId) {
+      tabs.forEach((tab, index) => {
+        if (tab.id === selectedTabId) {
+          currentTabIndex = index;
+        }
+      });
+    }
     this.state = {
-      currentTabIndex: 0,
-      currentTabChild: tabs[0].child,
+      currentTabIndex,
+      currentTabChild: tabs[currentTabIndex].child,
     };
     this.onTabClick = this.onTabClick.bind(this);
   }
@@ -51,5 +59,6 @@ export class TabbedContainer extends Component {
 }
 
 TabbedContainer.propTypes = {
+  selectedTabId: PropTypes.string.isRequired,
   tabs: PropTypes.arrayOf(PropTypes.any).isRequired,
 };

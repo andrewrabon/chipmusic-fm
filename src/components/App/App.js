@@ -60,9 +60,9 @@ export class App extends Component {
                   title="When I Sleep, My Heart Speaks"
                 />
               ) : [(authUser !== null ? (
-                <LoggedInTabs key="loggedInTabs" selectedTab={currentPageId} />
+                <LoggedInTabs key="loggedInTabs" selectedTabId={currentPageId} />
               ) : (
-                <LoggedOutTabs key="loggedOutTabs" selectedTab={currentPageId} />
+                <LoggedOutTabs key="loggedOutTabs" selectedTabId={currentPageId} />
               ))]}
             </div>
             <NavigationButton
