@@ -22,7 +22,7 @@ export class TabbedContainer extends Component {
 
     // Only replace state if coming from index, otherwise Gatsby appends the path for us.
     if (typeof window !== 'undefined' && window.location.pathname === '/') {
-      window.history.replaceState({}, '', selectedTabId);
+      window.history.pushState({}, '', `/${selectedTabId}`);
     }
   }
 
@@ -33,7 +33,7 @@ export class TabbedContainer extends Component {
       currentTabIndex: index,
       currentTabChild: child,
     });
-    window.history.replaceState({}, '', id);
+    window.history.pushState({}, '', `/${id}`);
   }
 
   render() {

@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TabbedContainer } from 'components/TabbedContainer';
 import { AboutFragment } from 'fragments/AboutFragment';
+import { FavoritesFragment } from 'fragments/FavoritesFragment';
 
 const ACCOUNT_TABS = [
   {
     id: 'favorites',
     display: 'Favorites',
-    child: (<div>Favorites</div>),
+    child: (<FavoritesFragment />),
   }, {
     id: 'history',
     display: 'History',
