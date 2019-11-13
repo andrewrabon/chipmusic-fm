@@ -9,6 +9,7 @@
   text-align: center;
 }
 .tabbed-container__tab {
+  display: inline-block;
   width: 100%;
   padding: 1.5rem 1rem;
   border: none;

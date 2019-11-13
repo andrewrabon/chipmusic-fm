@@ -77,6 +77,46 @@ input + input,
 input + button {
   margin-top: 1.5rem;
 }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table tr {
+  overflow: hidden;
+  border-radius: 8px;
+  border-top: 2px solid #eee;
+}
+table tr:hover {
+  background: #eee;
+}
+table tr:first-child {
+  border-top-color: transparent;
+}
+table tr.selected-row,
+table tr.selected-row + tr {
+  border-color: transparent;
+}
+table tr.selected-row td {
+  background: black;
+  border-color: transparent;
+  color: white;
+}
+table tr.selected-row td:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+table tr.selected-row td:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+table td {
+  padding: 0.5rem;
+}
+table td .material-icons {
+  float: right;
+  width: 26px;
+  margin-left: 1rem;
+}
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;

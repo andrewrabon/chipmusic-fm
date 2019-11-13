@@ -27,6 +27,11 @@ export class TabbedContainer extends Component {
   }
 
   onTabClick(event, index) {
+    // We do this instead of using a button so the SSR renders each tab as a link for non-JS
+    // users. We also do this instead of using Gatsby's <Link> so the tabs can be dynamic for
+    // everyone else.
+    event.preventDefault();
+    event.stopPropagation();
     const { tabs } = this.props;
     const { id, child } = tabs[index];
     this.setState({
@@ -48,9 +53,9 @@ export class TabbedContainer extends Component {
               const selectedClassName = index === currentTabIndex ? 'tabbed-container--selected' : '';
               return (
                 <li className={selectedClassName} key={tab.id}>
-                  <button className="tabbed-container__tab" type="button" onClick={(event) => this.onTabClick(event, index)}>
+                  <a href={`/${tab.id}`} className="tabbed-container__tab" onClick={(event) => this.onTabClick(event, index)}>
                     {tab.display}
-                  </button>
+                  </a>
                 </li>
               );
             })
