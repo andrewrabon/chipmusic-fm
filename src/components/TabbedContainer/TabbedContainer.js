@@ -19,15 +19,21 @@ export class TabbedContainer extends Component {
       currentTabChild: tabs[currentTabIndex].child,
     };
     this.onTabClick = this.onTabClick.bind(this);
+
+    // Only replace state if coming from index, otherwise Gatsby appends the path for us.
+    if (typeof window !== 'undefined' && window.location.pathname === '/') {
+      window.history.replaceState({}, '', selectedTabId);
+    }
   }
 
   onTabClick(event, index) {
     const { tabs } = this.props;
-    const { child } = tabs[index];
+    const { id, child } = tabs[index];
     this.setState({
       currentTabIndex: index,
       currentTabChild: child,
     });
+    window.history.replaceState({}, '', id);
   }
 
   render() {

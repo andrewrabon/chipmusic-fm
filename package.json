@@ -20,13 +20,14 @@
     "react-helmet": "^5.2.1"
   },
   "devDependencies": {
-    "prettier": "^1.18.2",
     "eslint": "^6.3.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-import": "^0.13.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsdoc": "^15.9.9",
-    "eslint-plugin-react": "^7.14.3"
+    "eslint-plugin-react": "^7.14.3",
+    "gatsby-plugin-remove-trailing-slashes": "^2.1.13",
+    "prettier": "^1.18.2"
   },
   "keywords": [
     "chipmusic",

@@ -25,7 +25,7 @@ function SEO({
 
   const metaDescription = description || site.siteMetadata.description;
 
-  const pageTitle = title === 'Home' ? '' : ' · %s';
+  const pageTitle = '';
 
   return (
     <Helmet

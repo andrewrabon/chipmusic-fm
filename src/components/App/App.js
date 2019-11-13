@@ -34,6 +34,9 @@ export class App extends Component {
     this.setState({
       currentPageId: pageId,
     });
+
+    // TODO: This does not currently play well with Gatsby's handling of the back button.
+    window.history.replaceState({}, '', pageId !== 'index' ? pageId : '/');
   }
 
   render() {
