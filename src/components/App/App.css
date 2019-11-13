@@ -85,13 +85,25 @@ table tr {
   overflow: hidden;
   border-radius: 8px;
   border-top: 2px solid #eee;
-}
-table tr:hover {
-  background: #eee;
+  cursor: pointer;
 }
 table tr:first-child {
-  border-top-color: transparent;
+  border-top: 0;
 }
+table tr:hover td {
+  background: #eee;
+  border-color: transparent;
+}
+table tr:hover td:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+table tr:hover td:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+table tr:hover,
+table tr:hover + tr,
 table tr.selected-row,
 table tr.selected-row + tr {
   border-color: transparent;
