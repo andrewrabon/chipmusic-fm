@@ -6,7 +6,7 @@ const FavoritesFragment = (props) => {
   const { firebase } = props;
   return (
     <>
-      Hello, fuckers.
+      Hello, world.
     </>
   );
 };
