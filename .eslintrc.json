@@ -19,6 +19,7 @@
   "rules": {
     "import/prefer-default-export": [0],
     "import/no-default-export": [1],
+    "jsx-a11y/media-has-caption": [0],
     "react/jsx-filename-extension": [0],
     "react/jsx-props-no-spreading": [0]
   },

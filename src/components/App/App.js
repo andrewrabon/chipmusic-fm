@@ -14,6 +14,9 @@ export class App extends Component {
     const { pageId } = props;
     this.state = {
       currentPageId: pageId,
+      song: {
+        url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
+      },
     };
     this.onNavigationButtonClick = this.onNavigationButtonClick.bind(this);
   }
@@ -40,7 +43,7 @@ export class App extends Component {
   }
 
   render() {
-    const { currentPageId } = this.state;
+    const { currentPageId, song } = this.state;
     let hasInvertedColors = false;
     let layoutClassName = 'layout-song';
     let navigationGlyph = 'account_circle';
@@ -73,7 +76,9 @@ export class App extends Component {
               hasInvertedColors={hasInvertedColors}
               onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
             />
-            <SongPlayer />
+            <SongPlayer
+              song={song}
+            />
           </>
         )}
       </AuthUserContext.Consumer>
