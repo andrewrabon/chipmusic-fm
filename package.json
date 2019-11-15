@@ -34,7 +34,7 @@
     "chiptunes",
     "gameboy"
   ],
-  "license": "GPL-3.0-only",
+  "license": "MPL-2.0",
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
