@@ -13,7 +13,11 @@ export const SongPlayer = (props) => {
     name: 'Optik 1-1',
     url: 'https://chipmusic.s3.amazonaws.com/music/2010/05/phib3r-optik_1-1.mp3',
   });
-  const handleScrubberChange = (event) => setScrubberPosition(event.target.value);
+  const handleScrubberChange = (event) => {
+    const { value } = event.target;
+    audioRef.current.currentTime = value;
+    setScrubberPosition(value);
+  };
   const handleSkipPreviousClick = (event) => setSongState(getRandomSong(event));
   const handlePlayPauseClick = () => {
     if (isPlaying) {
