@@ -1,9 +1,9 @@
 .song-credits {
+  visibility: hidden;
   position: absolute;
   bottom: 2rem;
   left: 2rem;
   color: white;
-  /* text-shadow: 2px 2px 2px black; */
   font-family: 'Josefin Sans';
   font-weight: bold;
 }
@@ -12,17 +12,4 @@
 .song-credits h3 {
   font-size: 1.5rem;
   line-height: 1.25;
-}
-.giphy-attribution {
-  position: absolute;
-  right: 0;
-  bottom: 6px;
-  left: 0;
-  text-align: center;
-}
-.giphy-attribution > a {
-  opacity: 0.5;
-}
-.giphy-attribution > a:hover {
-  opacity: 1.0;
 }

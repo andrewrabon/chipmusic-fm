@@ -6,6 +6,7 @@ import { SongCredits } from 'components/SongCredits';
 import { SongPlayer } from 'components/SongPlayer';
 import { LoggedInTabs } from 'components/LoggedInTabs';
 import { LoggedOutTabs } from 'components/LoggedOutTabs';
+import giphy from 'images/giphy.png';
 import './App.css';
 
 export class App extends Component {
@@ -14,6 +15,7 @@ export class App extends Component {
     const { pageId } = props;
     this.state = {
       currentPageId: pageId,
+      // isLoading: true,
       song: {
         name: 'Don\'t Fall Down',
         url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
@@ -46,7 +48,7 @@ export class App extends Component {
   render() {
     const { currentPageId, song } = this.state;
     let hasInvertedColors = false;
-    let layoutClassName = 'layout-song';
+    let layoutClassName = 'layout-song layout-song--loading';
     let navigationGlyph = 'account_circle';
     if (currentPageId !== 'index') {
       hasInvertedColors = true;
@@ -57,7 +59,9 @@ export class App extends Component {
       <AuthUserContext.Consumer>
         {(authUser) => (
           <>
-            <div className={layoutClassName}>
+            <div
+              className={layoutClassName}
+            >
               {currentPageId === 'index' ? (
                 <SongCredits
                   artist="IAYD"
@@ -71,6 +75,11 @@ export class App extends Component {
               ) : (
                 <LoggedOutTabs key="loggedOutTabs" selectedTabId={currentPageId} />
               ))]}
+              <div className="giphy-attribution">
+                <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">
+                  <img src={giphy} alt="Powered by GIPHY" height="15" />
+                </a>
+              </div>
             </div>
             <NavigationButton
               glyph={navigationGlyph}

@@ -11,7 +11,11 @@ export const NavigationButton = (props) => {
   const invertedClassName = hasInvertedColors ? 'navigation-button--inverted' : '';
 
   return (
-    <button type="button" className={`navigation-button ${invertedClassName}`} onClick={onClick}>
+    <button
+      className={`navigation-button ${invertedClassName}`}
+      onClick={onClick}
+      type="button"
+    >
       <span className="material-icons">{glyph}</span>
     </button>
   );

@@ -156,8 +156,15 @@ table td .material-icons {
   right: 0;
   bottom: 0;
   left: 0;
-  background-image: url('https://media.giphy.com/media/pVGsAWjzvXcZW4ZBTE/giphy.gif');
   background-size: cover;
+}
+.layout-song--loading {
+  background-image: url('../../images/static.gif');
+  background-repeat: repeat;
+  background-size: 200px;
+}
+.layout-song--loading .giphy-attribution {
+  visibility: hidden;
 }
 .layout-page {
   position: absolute;
@@ -166,4 +173,17 @@ table td .material-icons {
   width: calc(100vw - 400px - 6rem);
   min-height: calc(100vh - 4rem);
   margin-bottom: 2rem;
+}
+.giphy-attribution {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  left: 0;
+  text-align: center;
+}
+.giphy-attribution > a {
+  opacity: 0.7;
+}
+.giphy-attribution > a:hover {
+  opacity: 1.0;
 }
