@@ -1,3 +1,7 @@
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
+
 module.exports = {
   siteMetadata: {
     title: 'ChipMusic.fm',
@@ -41,6 +45,13 @@ module.exports = {
           },
         ],
         display: 'swap',
+      },
+    },
+    {
+      resolve: 'gatsby-source-giphy-random',
+      options: {
+        api_key: process.env.GATSBY_GIPHY_API_KEY,
+        tag: 'pixel art',
       },
     },
     'gatsby-plugin-remove-trailing-slashes',

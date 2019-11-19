@@ -1,46 +1,71 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import './SongPlayer.css';
 
 export const SongPlayer = (props) => {
   const { song } = props;
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [songState, setSongState] = useState(song);
   const [scrubberPosition, setScrubberPosition] = useState(0);
 
   const getRandomSong = () => ({
+    name: 'Optik 1-1',
     url: 'https://chipmusic.s3.amazonaws.com/music/2010/05/phib3r-optik_1-1.mp3',
   });
-  const onScrubberChange = (event) => setScrubberPosition(event.target.value);
-  const onSkipNextClick = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setSongState(getRandomSong());
+  const handleScrubberChange = (event) => setScrubberPosition(event.target.value);
+  const handleSkipPreviousClick = (event) => setSongState(getRandomSong(event));
+  const handlePlayPauseClick = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
   };
+  const handleSkipNextClick = (event) => setSongState(getRandomSong(event));
 
   return (
     <div className="player">
       <audio
+        onTimeUpdate={(event) => setScrubberPosition(event.target.currentTime)}
+        ref={audioRef}
         src={songState.url}
-        controls
       />
       <input
         className="player__scrubber"
         min="0"
-        onChange={onScrubberChange}
+        onChange={handleScrubberChange}
         step="0.01"
         type="range"
         value={scrubberPosition}
       />
-      <a href="/#" className="player__control" target="_blank" download>
+      <a
+        href={songState.url}
+        className="player__control"
+        rel="noopener noreferrer"
+        target="_blank"
+        download={songState.name}
+      >
         <span className="material-icons">cloud_download</span>
       </a>
-      <button className="player__control" type="button">
+      <button
+        className="player__control"
+        onClick={handleSkipPreviousClick}
+        type="button"
+      >
         <span className="material-icons">skip_previous</span>
       </button>
-      <button className="player__control" type="button">
-        <span className="material-icons">play_circle_filled</span>
+      <button className="player__control" onClick={handlePlayPauseClick} type="button">
+        <span className="material-icons">
+          {isPlaying ? 'pause_circle_filled' : 'play_circle_filled'}
+        </span>
       </button>
-      <button className="player__control" type="button" onClick={onSkipNextClick}>
+      <button
+        className="player__control"
+        type="button"
+        onClick={handleSkipNextClick}
+      >
         <span className="material-icons">skip_next</span>
       </button>
       <button className="player__control" type="button">

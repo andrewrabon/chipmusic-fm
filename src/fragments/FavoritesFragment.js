@@ -8,35 +8,55 @@ const FavoritesFragment = (props) => {
     <table>
       <tbody>
         <tr>
-          <td>&ldquo;When I Sleep, My Heart Speaks&rdquo; by IAYD</td>
+          <td>
+            <strong>When I Sleep, My Heart Speaks</strong>
+            {' '}
+            &middot; IAYD
+          </td>
           <td>
             <span className="material-icons">play_circle_outline</span>
             <span className="material-icons">favorite_filled</span>
           </td>
         </tr>
         <tr className="selected-row">
-          <td>&ldquo;Triwing Madness!&rdquo; by Hell-O Bit!</td>
+          <td>
+            <strong>Triwing Madness!</strong>
+            {' '}
+            &middot; Hell-O Bit!
+          </td>
           <td>
             <span className="material-icons">pause_circle_outline</span>
             <span className="material-icons">favorite_filled</span>
           </td>
         </tr>
         <tr>
-          <td>&ldquo;unclassified&rdquo; by mikrobotmen</td>
+          <td>
+            <strong>unclassified</strong>
+            {' '}
+            &middot; mikrobotmen
+          </td>
           <td>
             <span className="material-icons">play_circle_outline</span>
             <span className="material-icons">favorite_filled</span>
           </td>
         </tr>
         <tr>
-          <td>&ldquo;No Man&apos;s Land&rdquo; by Dj RoboRob</td>
+          <td>
+            <strong>No Man&apos;s Land</strong>
+            {' '}
+            &middot; Dj RoboRob
+          </td>
           <td>
             <span className="material-icons">play_circle_outline</span>
             <span className="material-icons">favorite_filled</span>
           </td>
         </tr>
         <tr>
-          <td>&ldquo;Air&rdquo; by Adventures in Slumberland</td>
+          <td>
+            <strong>Air</strong>
+            {' '}
+            &middot; Adventures in Slumberland
+          </td>
           <td>
             <span className="material-icons">play_circle_outline</span>
             <span className="material-icons">favorite_filled</span>

@@ -15,6 +15,7 @@ export class App extends Component {
     this.state = {
       currentPageId: pageId,
       song: {
+        name: 'Don\'t Fall Down',
         url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
       },
     };
