@@ -57,7 +57,10 @@ export class App extends Component {
   }
 
   async fetchGif() {
-    const results = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=${process.env.GATSBY_GIPHY_API_KEY}&tag=pixel art`);
+    this.setState({
+      gifUrl: undefined,
+    });
+    const results = await fetch(process.env.GATSBY_GIPHY_RANDOM_ENDPOINT);
     const gif = await results.json();
     this.setState({
       gifUrl: gif.data.image_url,
