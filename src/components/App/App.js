@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ErrorBar } from 'components/ErrorBar';
 import { NavigationButton } from 'components/NavigationButton';
 import { SongCredits } from 'components/SongCredits';
 import { SongPlayer } from 'components/SongPlayer';
@@ -108,6 +109,10 @@ export class App extends Component {
 
     return (
       <>
+        <ErrorBar
+          isVisible={song.artist === 'Azuria'}
+          message="Hello, world."
+        />
         <div
           className={layoutClassName}
           style={backgroundGifStyle}

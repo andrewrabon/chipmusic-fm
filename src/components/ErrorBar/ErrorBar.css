@@ -1,0 +1,28 @@
+.error-bar {
+  position: absolute;
+  top: 0;
+  right: 2rem;
+  left: 2rem;
+  padding: 1rem 1rem 1rem 68px; /* 68px = approx. two icons + padding */
+  background: rgba(255, 0, 0, 0.9);
+  border-radius: 0 0 8px 8px;
+  transform: translate(0, -88px);
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  z-index: 1;
+  line-height: 1.5;
+}
+.error-bar button {
+  background: none;
+  border: 0;
+  color: white;
+  cursor: pointer;
+}
+.error-bar__bug-report-button,
+.error-bar__dismiss-button {
+  float: right;
+}
+.error-bar__dismiss-button {
+  margin-left: 1rem;
+}
