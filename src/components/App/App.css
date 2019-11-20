@@ -123,6 +123,7 @@ table tr.selected-row td:last-child {
 }
 table td {
   padding: 0.5rem;
+  overflow: hidden;
 }
 table td .material-icons {
   float: right;

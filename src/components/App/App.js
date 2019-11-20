@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AuthUserContext } from 'components/Firebase';
 import { NavigationButton } from 'components/NavigationButton';
 import { SongCredits } from 'components/SongCredits';
 import { SongPlayer } from 'components/SongPlayer';
@@ -9,18 +8,25 @@ import { LoggedOutTabs } from 'components/LoggedOutTabs';
 import giphy from 'images/giphy.png';
 import './App.css';
 
+const FAKE_SONG = {
+  artist: 'Solomonster',
+  favoriteCount: 6,
+  name: 'Don\'t Fall Down',
+  playCount: 14,
+  url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
+};
+
 export class App extends Component {
   constructor(props) {
     super(props);
     const { pageId } = props;
     this.state = {
       currentPageId: pageId,
-      // isLoading: true,
-      song: {
-        name: 'Don\'t Fall Down',
-        url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
-      },
+      hasLoadedSong: true, // This is to trick Gatsby into rendering SongCredits for no-JS mode.
+      song: FAKE_SONG,
     };
+    this.handleSkipNext = this.handleSkipNext.bind(this);
+    this.handleSkipPrevious = this.handleSkipPrevious.bind(this);
     this.onNavigationButtonClick = this.onNavigationButtonClick.bind(this);
   }
 
@@ -45,8 +51,29 @@ export class App extends Component {
     window.history.pushState({}, '', pageId !== 'index' ? `/${pageId}` : '/');
   }
 
+  handleSkipNext() {
+    this.setState({
+      hasLoadedSong: false,
+      song: {
+        url: 'https://chipmusic.s3.amazonaws.com/music/2012/04/azuria_day-in-dream-oh-well_1.mp3',
+        artist: 'Azuria',
+        name: 'Day in Dream Oh Well',
+        favoriteCount: 0,
+        playCount: 2,
+      },
+    });
+  }
+
+  handleSkipPrevious() {
+    this.setState({
+      hasLoadedSong: false,
+      song: FAKE_SONG,
+    });
+  }
+
   render() {
-    const { currentPageId, song } = this.state;
+    const { authUser } = this.props;
+    const { currentPageId, hasLoadedSong, song } = this.state;
     let hasInvertedColors = false;
     let layoutClassName = 'layout-song layout-song--loading';
     let navigationGlyph = 'account_circle';
@@ -55,47 +82,54 @@ export class App extends Component {
       layoutClassName = 'layout-page';
       navigationGlyph = 'home';
     }
+
     return (
-      <AuthUserContext.Consumer>
-        {(authUser) => (
-          <>
-            <div
-              className={layoutClassName}
-            >
-              {currentPageId === 'index' ? (
-                <SongCredits
-                  artist="IAYD"
-                  favoriteCount={6}
-                  key="songCredits"
-                  playCount={18}
-                  title="When I Sleep, My Heart Speaks"
-                />
-              ) : [(authUser !== null ? (
-                <LoggedInTabs key="loggedInTabs" selectedTabId={currentPageId} />
-              ) : (
-                <LoggedOutTabs key="loggedOutTabs" selectedTabId={currentPageId} />
-              ))]}
-              <div className="giphy-attribution">
-                <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">
-                  <img src={giphy} alt="Powered by GIPHY" height="15" />
-                </a>
-              </div>
-            </div>
-            <NavigationButton
-              glyph={navigationGlyph}
-              hasInvertedColors={hasInvertedColors}
-              onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
+      <>
+        <div
+          className={layoutClassName}
+        >
+          {currentPageId === 'index' ? (
+            <SongCredits
+              artist={song.artist}
+              favoriteCount={song.favoriteCount}
+              isVisible={hasLoadedSong}
+              key="songCredits"
+              name={song.name}
+              playCount={song.playCount}
+              url={song.url}
             />
-            <SongPlayer
-              song={song}
-            />
-          </>
-        )}
-      </AuthUserContext.Consumer>
+          ) : [(authUser !== null ? (
+            <LoggedInTabs key="loggedInTabs" selectedTabId={currentPageId} />
+          ) : (
+            <LoggedOutTabs key="loggedOutTabs" selectedTabId={currentPageId} />
+          ))]}
+          <div className="giphy-attribution">
+            <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">
+              <img src={giphy} alt="Powered by GIPHY" height="15" />
+            </a>
+          </div>
+        </div>
+        <NavigationButton
+          glyph={navigationGlyph}
+          hasInvertedColors={hasInvertedColors}
+          onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
+        />
+        <SongPlayer
+          onSkipPrevious={this.handleSkipPrevious}
+          onSkipNext={this.handleSkipNext}
+          onSongLoaded={() => this.setState({ hasLoadedSong: true })}
+          song={song}
+        />
+      </>
     );
   }
 }
 
 App.propTypes = {
+  authUser: PropTypes.objectOf(PropTypes.any),
   pageId: PropTypes.string.isRequired,
+};
+
+App.defaultProps = {
+  authUser: null,
 };

@@ -4,7 +4,9 @@ import firebase from 'firebase';
 import 'firebase/auth';
 import 'firebase/database';
 import { App } from 'components/App';
-import { getFirebase, withAuthentication, FirebaseContext } from 'components/Firebase';
+import {
+  AuthUserContext, FirebaseContext, getFirebase, withAuthentication,
+} from 'components/Firebase';
 import { SEO } from 'components/SEO';
 
 const AppWithAuthentication = withAuthentication((props) => {
@@ -13,10 +15,14 @@ const AppWithAuthentication = withAuthentication((props) => {
     pageId,
   } = props;
   return (
-    <>
-      <SEO title={title} />
-      <App pageId={pageId} {...props} />
-    </>
+    <AuthUserContext.Consumer>
+      {(authUser) => (
+        <>
+          <SEO title={title} />
+          <App pageId={pageId} authUser={authUser} {...props} />
+        </>
+      )}
+    </AuthUserContext.Consumer>
   );
 });
 

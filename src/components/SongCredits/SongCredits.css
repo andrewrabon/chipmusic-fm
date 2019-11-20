@@ -1,5 +1,5 @@
 .song-credits {
-  visibility: hidden;
+  opacity: 0;
   position: absolute;
   bottom: 2rem;
   left: 2rem;
@@ -12,4 +12,7 @@
 .song-credits h3 {
   font-size: 1.5rem;
   line-height: 1.25;
+}
+.song-credits--visible {
+  opacity: 1.0;
 }
