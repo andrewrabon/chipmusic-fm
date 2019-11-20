@@ -22,12 +22,17 @@ export class App extends Component {
     const { pageId } = props;
     this.state = {
       currentPageId: pageId,
+      gifUrl: undefined,
       hasLoadedSong: true, // This is to trick Gatsby into rendering SongCredits for no-JS mode.
       song: FAKE_SONG,
     };
     this.handleSkipNext = this.handleSkipNext.bind(this);
     this.handleSkipPrevious = this.handleSkipPrevious.bind(this);
     this.onNavigationButtonClick = this.onNavigationButtonClick.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchGif();
   }
 
   onNavigationButtonClick(event, isLoggedIn) {
@@ -51,7 +56,16 @@ export class App extends Component {
     window.history.pushState({}, '', pageId !== 'index' ? `/${pageId}` : '/');
   }
 
+  async fetchGif() {
+    const results = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=${process.env.GATSBY_GIPHY_API_KEY}&tag=pixel art`);
+    const gif = await results.json();
+    this.setState({
+      gifUrl: gif.data.image_url,
+    });
+  }
+
   handleSkipNext() {
+    this.fetchGif();
     this.setState({
       hasLoadedSong: false,
       song: {
@@ -65,6 +79,7 @@ export class App extends Component {
   }
 
   handleSkipPrevious() {
+    this.fetchGif();
     this.setState({
       hasLoadedSong: false,
       song: FAKE_SONG,
@@ -73,20 +88,26 @@ export class App extends Component {
 
   render() {
     const { authUser } = this.props;
-    const { currentPageId, hasLoadedSong, song } = this.state;
+    const {
+      currentPageId, gifUrl, hasLoadedSong, song,
+    } = this.state;
     let hasInvertedColors = false;
-    let layoutClassName = 'layout-song layout-song--loading';
+    let layoutClassName = `layout-song ${hasLoadedSong ? '' : 'layout-song--loading'}`;
     let navigationGlyph = 'account_circle';
+    let backgroundGifStyle;
     if (currentPageId !== 'index') {
       hasInvertedColors = true;
       layoutClassName = 'layout-page';
       navigationGlyph = 'home';
+    } else if (hasLoadedSong) {
+      backgroundGifStyle = { backgroundImage: `url('${gifUrl}')` };
     }
 
     return (
       <>
         <div
           className={layoutClassName}
+          style={backgroundGifStyle}
         >
           {currentPageId === 'index' ? (
             <SongCredits
