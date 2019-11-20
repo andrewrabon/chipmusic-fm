@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import './ErrorBar.css';
 
-export const ErrorBar = ({ message, isVisible }) => {
-  const [visibilityState, setVisibilityState] = useState(isVisible);
-  const visibilityStyles = visibilityState ? { transform: 'translate(0, 0)' } : undefined;
-  const handleDismiss = () => {
-    setVisibilityState(false);
-  };
+export const ErrorBar = ({ message, isVisible, onDismiss }) => {
+  const errorBarRef = useRef(null);
+  let handleDismiss = onDismiss;
+  if (typeof handleDismiss !== 'function') {
+    handleDismiss = () => {
+      errorBarRef.current.style.transform = '';
+    };
+  }
+  const visibilityStyles = isVisible ? { transform: 'translate(0, 0)' } : undefined;
   return (
-    <div className="error-bar" style={visibilityStyles}>
+    <div
+      className="error-bar"
+      ref={errorBarRef}
+      style={visibilityStyles}
+    >
       {message}
       <button
         className="error-bar__dismiss-button"
@@ -35,8 +42,10 @@ export const ErrorBar = ({ message, isVisible }) => {
 ErrorBar.propTypes = {
   message: PropTypes.string.isRequired,
   isVisible: PropTypes.bool,
+  onDismiss: PropTypes.func,
 };
 
 ErrorBar.defaultProps = {
   isVisible: false,
+  onDismiss: undefined,
 };
