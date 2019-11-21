@@ -30,7 +30,7 @@ export const SongPlayer = (props) => {
         onCanPlay={onSongLoaded}
         onTimeUpdate={(event) => setScrubberPosition(event.target.currentTime)}
         ref={audioRef}
-        src={song.url}
+        src={song.file.url}
       />
       <input
         className="player__scrubber"
@@ -41,7 +41,7 @@ export const SongPlayer = (props) => {
         value={scrubberPosition}
       />
       <a
-        href={song.url}
+        href={song.file.url}
         className="player__control"
         rel="noopener noreferrer"
         target="_blank"

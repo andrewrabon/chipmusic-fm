@@ -6,10 +6,10 @@ export const SongCredits = (props) => {
   const {
     artist,
     favoriteCount,
+    href,
     isVisible,
     name,
     playCount,
-    url,
   } = props;
 
   const songCreditsVisibleStyle = isVisible ? 'song-credits--visible' : '';
@@ -27,7 +27,7 @@ export const SongCredits = (props) => {
   return (
     <a
       className={`song-credits ${songCreditsVisibleStyle}`}
-      href={url}
+      href={href}
       rel="noopener noreferrer"
       target="_blank"
     >
@@ -50,8 +50,8 @@ export const SongCredits = (props) => {
 SongCredits.propTypes = {
   artist: PropTypes.string.isRequired,
   favoriteCount: PropTypes.number.isRequired,
+  href: PropTypes.string.isRequired,
   isVisible: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   playCount: PropTypes.number.isRequired,
-  url: PropTypes.string.isRequired,
 };

@@ -12,9 +12,12 @@ import './App.css';
 const FAKE_SONG = {
   artist: 'Solomonster',
   favoriteCount: 6,
+  link: 'https://chipmusic.org/Solomonster/music/dont-fall-down',
   name: 'Don\'t Fall Down',
   playCount: 14,
-  url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
+  file: {
+    url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
+  },
 };
 
 export class App extends Component {
@@ -25,6 +28,7 @@ export class App extends Component {
       currentPageId: pageId,
       gifUrl: undefined,
       hasLoadedSong: true, // This is to trick Gatsby into rendering SongCredits for no-JS mode.
+      isErrorBarVisible: false,
       song: FAKE_SONG,
     };
     this.handleSkipNext = this.handleSkipNext.bind(this);
@@ -72,10 +76,14 @@ export class App extends Component {
     this.fetchGif();
     this.setState({
       hasLoadedSong: false,
+      isErrorBarVisible: true,
       song: {
-        url: 'https://chipmusic.s3.amazonaws.com/music/2012/04/azuria_day-in-dream-oh-well_1.mp3',
+        link: 'https://chipmusic.org/Azuria/music/day-in-dream-oh-well',
+        file: {
+          url: 'https://chipmusic.s3.amazonaws.com/music/2012/04/azuria_day-in-dream-oh-well_1.mp3',
+        },
         artist: 'Azuria',
-        name: 'Day in Dream Oh Well',
+        name: 'Day In Dream (Oh Well)',
         favoriteCount: 0,
         playCount: 2,
       },
@@ -93,7 +101,7 @@ export class App extends Component {
   render() {
     const { authUser } = this.props;
     const {
-      currentPageId, gifUrl, hasLoadedSong, song,
+      currentPageId, gifUrl, hasLoadedSong, isErrorBarVisible, song,
     } = this.state;
     let hasInvertedColors = false;
     let layoutClassName = `layout-song ${hasLoadedSong ? '' : 'layout-song--loading'}`;
@@ -110,7 +118,7 @@ export class App extends Component {
     return (
       <>
         <ErrorBar
-          isVisible={song.artist === 'Azuria'}
+          isVisible={isErrorBarVisible}
           message="Hello, world."
         />
         <div
@@ -121,11 +129,11 @@ export class App extends Component {
             <SongCredits
               artist={song.artist}
               favoriteCount={song.favoriteCount}
+              href={song.link}
               isVisible={hasLoadedSong}
               key="songCredits"
               name={song.name}
               playCount={song.playCount}
-              url={song.url}
             />
           ) : [(authUser !== null ? (
             <LoggedInTabs key="loggedInTabs" selectedTabId={currentPageId} />
