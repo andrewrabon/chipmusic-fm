@@ -19,59 +19,79 @@ class Firebase {
     }
   }
 
-  doCreateUserWithEmailAndPassword = (email, password) => this.auth.createUserWithEmailAndPassword(
-    email,
-    password,
-  );
+  doCreateUserWithEmailAndPassword(email, password) {
+    return this.auth.createUserWithEmailAndPassword(
+      email,
+      password,
+    );
+  }
 
-  doSignInWithEmailAndPassword = (email, password) => this.auth.signInWithEmailAndPassword(
-    email,
-    password,
-  );
+  doSignInWithEmailAndPassword(email, password) {
+    return this.auth.signInWithEmailAndPassword(
+      email,
+      password,
+    );
+  }
 
-  doSignInWithGoogle = () => this.auth.signInWithPopup(this.googleProvider);
+  doSignInWithGoogle() {
+    return this.auth.signInWithPopup(this.googleProvider);
+  }
 
-  doSignInWithFacebook = () => this.auth.signInWithPopup(this.facebookProvider);
+  doSignInWithFacebook() {
+    return this.auth.signInWithPopup(this.facebookProvider);
+  }
 
-  doSignInWithTwitter = () => this.auth.signInWithPopup(this.twitterProvider);
+  doSignInWithTwitter() {
+    return this.auth.signInWithPopup(this.twitterProvider);
+  }
 
-  doSignOut = () => this.auth.signOut();
+  doSignOut() {
+    return this.auth.signOut();
+  }
 
-  doPasswordReset = (email) => this.auth.sendPasswordResetEmail(email);
+  doPasswordReset(email) {
+    return this.auth.sendPasswordResetEmail(email);
+  }
 
-  doSendEmailVerification = () => this.auth.currentUser.sendEmailVerification({
-    url: process.env.GATSBY_CONFIRMATION_EMAIL_REDIRECT,
-  });
+  doSendEmailVerification() {
+    return this.auth.currentUser.sendEmailVerification({
+      url: process.env.GATSBY_CONFIRMATION_EMAIL_REDIRECT,
+    });
+  }
 
-  doPasswordUpdate = (password) => this.auth.currentUser.updatePassword(password);
+  doPasswordUpdate(password) {
+    return this.auth.currentUser.updatePassword(password);
+  }
 
-  onAuthUserListener = (next, fallback) => this.auth.onAuthStateChanged((authUser) => {
-    if (authUser) {
-      this.user(authUser.uid)
-        .once('value')
-        .then((snapshot) => {
-          const dbUser = snapshot.val();
+  onAuthUserListener(next, fallback) {
+    return this.auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        this.user(authUser.uid)
+          .once('value')
+          .then((snapshot) => {
+            const dbUser = snapshot.val();
 
-          // default empty roles
-          if (!dbUser.roles) {
-            dbUser.roles = {};
-          }
+            // default empty roles
+            if (!dbUser.roles) {
+              dbUser.roles = {};
+            }
 
-          // merge auth and db user
-          const newAuthUser = {
-            uid: authUser.uid,
-            email: authUser.email,
-            emailVerified: authUser.emailVerified,
-            providerData: authUser.providerData,
-            ...dbUser,
-          };
+            // merge auth and db user
+            const newAuthUser = {
+              uid: authUser.uid,
+              email: authUser.email,
+              emailVerified: authUser.emailVerified,
+              providerData: authUser.providerData,
+              ...dbUser,
+            };
 
-          next(newAuthUser);
-        });
-    } else {
-      fallback();
-    }
-  });
+            next(newAuthUser);
+          });
+      } else {
+        fallback();
+      }
+    });
+  }
 }
 
 let firebase;

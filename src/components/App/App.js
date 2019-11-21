@@ -26,7 +26,10 @@ export class App extends Component {
     const { pageId } = props;
     this.state = {
       currentPageId: pageId,
-      gifUrl: undefined,
+      gif: {
+        url: undefined,
+        link: undefined,
+      },
       hasLoadedSong: true, // This is to trick Gatsby into rendering SongCredits for no-JS mode.
       isErrorBarVisible: false,
       song: FAKE_SONG,
@@ -63,12 +66,15 @@ export class App extends Component {
 
   async fetchGif() {
     this.setState({
-      gifUrl: undefined,
+      gif: {},
     });
     const results = await fetch(process.env.GATSBY_GIPHY_RANDOM_ENDPOINT);
     const gif = await results.json();
     this.setState({
-      gifUrl: gif.data.image_url,
+      gif: {
+        link: gif.data.url,
+        url: gif.data.image_url,
+      },
     });
   }
 
@@ -101,7 +107,7 @@ export class App extends Component {
   render() {
     const { authUser } = this.props;
     const {
-      currentPageId, gifUrl, hasLoadedSong, isErrorBarVisible, song,
+      currentPageId, gif, hasLoadedSong, isErrorBarVisible, song,
     } = this.state;
     let hasInvertedColors = false;
     let layoutClassName = `layout-song ${hasLoadedSong ? '' : 'layout-song--loading'}`;
@@ -112,7 +118,7 @@ export class App extends Component {
       layoutClassName = 'layout-page';
       navigationGlyph = 'home';
     } else if (hasLoadedSong) {
-      backgroundGifStyle = { backgroundImage: `url('${gifUrl}')` };
+      backgroundGifStyle = { backgroundImage: `url('${gif.url}')` };
     }
 
     return (
@@ -141,7 +147,7 @@ export class App extends Component {
             <LoggedOutTabs key="loggedOutTabs" selectedTabId={currentPageId} />
           ))]}
           <div className="giphy-attribution">
-            <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">
+            <a href={gif.link} target="_blank" rel="noopener noreferrer">
               <img src={giphy} alt="Powered by GIPHY" height="15" />
             </a>
           </div>

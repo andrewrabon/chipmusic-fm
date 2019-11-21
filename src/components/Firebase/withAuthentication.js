@@ -5,13 +5,12 @@ import { withFirebase } from './FirebaseContext';
 
 export const withAuthentication = (Component) => {
   class WithAuthentication extends React.Component {
-    hasFirebaseInitialized = false;
-
     constructor(props) {
       super(props);
 
       this.state = {
         authUser: null,
+        hasFirebaseInitialized: false,
       };
     }
 
@@ -35,8 +34,11 @@ export const withAuthentication = (Component) => {
 
     firebaseInit() {
       const { firebase } = this.props;
-      if (firebase && !this.hasFirebaseInitialized) {
-        this.hasFirebaseInitialized = true;
+      const { hasFirebaseInitialized } = this.state;
+      if (firebase && !hasFirebaseInitialized) {
+        this.setState({
+          hasFirebaseInitialized: true,
+        });
 
         this.listener = firebase.auth.onAuthStateChanged(
           (authUser) => {
