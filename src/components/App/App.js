@@ -27,9 +27,10 @@ export class App extends Component {
     this.state = {
       currentPageId: pageId,
       gif: {
-        url: undefined,
         link: undefined,
+        url: undefined,
       },
+      gifStill: 'https://i.imgur.com/GmgOsB3.png',
       hasLoadedSong: true, // This is to trick Gatsby into rendering SongCredits for no-JS mode.
       isErrorBarVisible: false,
       song: FAKE_SONG,
@@ -75,6 +76,7 @@ export class App extends Component {
         link: gif.data.url,
         url: gif.data.image_url,
       },
+      gifStill: gif.data.images['480w_still'].url,
     });
   }
 
@@ -107,7 +109,7 @@ export class App extends Component {
   render() {
     const { authUser } = this.props;
     const {
-      currentPageId, gif, hasLoadedSong, isErrorBarVisible, song,
+      currentPageId, gif, gifStill, hasLoadedSong, isErrorBarVisible, song,
     } = this.state;
     let hasInvertedColors = false;
     let layoutClassName = `layout-song ${hasLoadedSong ? '' : 'layout-song--loading'}`;
@@ -121,11 +123,22 @@ export class App extends Component {
       backgroundGifStyle = { backgroundImage: `url('${gif.url}')` };
     }
 
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: song.name,
+        artist: song.artist,
+        artwork: [
+          { src: gifStill, sizes: '480x480', type: 'image/jpg' },
+        ],
+      });
+    }
+
     return (
       <>
         <ErrorBar
           isVisible={isErrorBarVisible}
           message="Hello, world."
+          onDismiss={() => this.setState({ isErrorBarVisible: false })}
         />
         <div
           className={layoutClassName}

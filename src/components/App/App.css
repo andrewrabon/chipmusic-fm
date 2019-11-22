@@ -11,6 +11,9 @@ a {
   text-decoration: none;
   color: inherit;
 }
+a:focus {
+  outline: 1px solid #4D90FE;
+}
 h1,
 h2,
 h3 {
