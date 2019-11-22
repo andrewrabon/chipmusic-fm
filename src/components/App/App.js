@@ -131,6 +131,10 @@ export class App extends Component {
           { src: gifStill, sizes: '480x480', type: 'image/jpg' },
         ],
       });
+      // navigator.mediaSession.setActionHandler('play', function() {});
+      // navigator.mediaSession.setActionHandler('pause', function() {});
+      navigator.mediaSession.setActionHandler('previoustrack', this.handleSkipPrevious);
+      navigator.mediaSession.setActionHandler('nexttrack', this.handleSkipNext);
     }
 
     return (
