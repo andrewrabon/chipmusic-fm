@@ -28,13 +28,17 @@ export class App extends Component {
       history: [],
       isErrorBarVisible: false,
       isSongPlaying: false,
+      // shouldSongAutoplay: false,
+      scrubberPosition: 0,
       song: EMPTY_SONG,
     };
 
+    this.audioRef = React.createRef();
     this.fetchGif = this.fetchGif.bind(this);
     this.fetchSong = this.fetchSong.bind(this);
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
+    this.handleScrubberChange = this.handleScrubberChange.bind(this);
     this.handleSkipNext = this.handleSkipNext.bind(this);
     this.handleSkipPrevious = this.handleSkipPrevious.bind(this);
     this.handleSongLoaded = this.handleSongLoaded.bind(this);
@@ -93,19 +97,25 @@ export class App extends Component {
     this.setState({
       history: history.concat([currentSong]),
       song: currentSong,
-    });
+    }, this.handlePlay);
   }
 
   handlePlay() {
+    this.audioRef.current.play();
     this.setState({
       isSongPlaying: true,
     });
   }
 
   handlePause() {
+    this.audioRef.current.pause();
     this.setState({
       isSongPlaying: false,
     });
+  }
+
+  handleScrubberChange(newTime) {
+    this.audioRef.current.currentTime = newTime;
   }
 
   handleSkipNext() {
@@ -133,7 +143,7 @@ export class App extends Component {
       this.setState({
         history: history.slice(0, history.length - 1),
         song: history[history.length - 2],
-      });
+      }, this.handlePlay);
     }
 
     if (hasLoadedSong) {
@@ -150,7 +160,14 @@ export class App extends Component {
   render() {
     const { authUser } = this.props;
     const {
-      currentPageId, gif, gifStill, hasLoadedSong, isErrorBarVisible, isSongPlaying, song,
+      currentPageId,
+      gif,
+      gifStill,
+      hasLoadedSong,
+      isErrorBarVisible,
+      isSongPlaying,
+      scrubberPosition,
+      song,
     } = this.state;
 
     let hasInvertedColors = false;
@@ -178,8 +195,8 @@ export class App extends Component {
           { src: gifStill, sizes: '480x480', type: 'image/jpg' },
         ],
       });
-      // navigator.mediaSession.setActionHandler('play', function() {});
-      // navigator.mediaSession.setActionHandler('pause', function() {});
+      navigator.mediaSession.setActionHandler('play', this.handlePlay);
+      navigator.mediaSession.setActionHandler('pause', this.handlePause);
       navigator.mediaSession.setActionHandler('previoustrack', this.handleSkipPrevious);
       navigator.mediaSession.setActionHandler('nexttrack', this.handleSkipNext);
     }
@@ -226,12 +243,20 @@ export class App extends Component {
           hasInvertedColors={hasInvertedColors}
           onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
         />
+        <audio
+          onCanPlay={this.handleSongLoaded}
+          onTimeUpdate={(event) => this.setState({ scrubberPosition: event.target.currentTime })}
+          ref={this.audioRef}
+          src={song.file.url}
+        />
         <SongPlayer
+          isSongPlaying={isSongPlaying}
+          onScrubberChange={this.handleScrubberChange}
           onPlay={this.handlePlay}
           onPause={this.handlePause}
           onSkipPrevious={this.handleSkipPrevious}
           onSkipNext={this.handleSkipNext}
-          onSongLoaded={this.handleSongLoaded}
+          scrubberPosition={scrubberPosition}
           song={song}
         />
       </>

@@ -1,37 +1,33 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import './SongPlayer.css';
 
 export const SongPlayer = (props) => {
   const {
-    song, onSkipPrevious, onSkipNext, onSongLoaded,
+    isSongPlaying,
+    onPlay,
+    onPause,
+    onScrubberChange,
+    onSkipPrevious,
+    onSkipNext,
+    scrubberPosition,
+    song,
   } = props;
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [scrubberPosition, setScrubberPosition] = useState(0);
 
   const handleScrubberChange = (event) => {
     const { value } = event.target;
-    audioRef.current.currentTime = value;
-    setScrubberPosition(value);
+    onScrubberChange(value);
   };
   const handlePlayPauseClick = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
+    if (isSongPlaying) {
+      onPause();
     } else {
-      audioRef.current.play();
+      onPlay();
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (
     <div className="player">
-      <audio
-        onCanPlay={onSongLoaded}
-        onTimeUpdate={(event) => setScrubberPosition(event.target.currentTime)}
-        ref={audioRef}
-        src={song.file.url}
-      />
       <input
         className="player__scrubber"
         min="0"
@@ -62,7 +58,7 @@ export const SongPlayer = (props) => {
         type="button"
       >
         <span className="material-icons">
-          {isPlaying ? 'pause_circle_filled' : 'play_circle_filled'}
+          {isSongPlaying ? 'pause_circle_filled' : 'play_circle_filled'}
         </span>
       </button>
       <button
@@ -80,8 +76,12 @@ export const SongPlayer = (props) => {
 };
 
 SongPlayer.propTypes = {
+  isSongPlaying: PropTypes.bool.isRequired,
+  onScrubberChange: PropTypes.func.isRequired,
+  onPlay: PropTypes.func.isRequired,
+  onPause: PropTypes.func.isRequired,
   onSkipNext: PropTypes.func.isRequired,
   onSkipPrevious: PropTypes.func.isRequired,
-  onSongLoaded: PropTypes.func.isRequired,
+  scrubberPosition: PropTypes.number.isRequired,
   song: PropTypes.objectOf(PropTypes.any).isRequired,
 };
