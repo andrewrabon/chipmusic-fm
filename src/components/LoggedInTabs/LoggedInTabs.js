@@ -4,33 +4,41 @@ import { TabbedContainer } from 'components/TabbedContainer';
 import { AboutFragment } from 'fragments/AboutFragment';
 import { FavoritesFragment } from 'fragments/FavoritesFragment';
 
-const ACCOUNT_TABS = [
-  {
-    id: 'favorites',
-    display: 'Favorites',
-    child: (<FavoritesFragment />),
-  }, {
-    id: 'history',
-    display: 'History',
-    child: (<div>History</div>),
-  }, {
-    id: 'settings',
-    display: 'Settings',
-    child: (<div>Settings</div>),
-  }, {
-    id: 'about',
-    display: 'About',
-    child: <AboutFragment />,
-  },
-];
-
 export const LoggedInTabs = (props) => {
-  const { selectedTabId } = props;
+  const { isSongPlaying, selectedTabId, song } = props;
+
+  const accountTabs = [
+    {
+      id: 'favorites',
+      display: 'Favorites',
+      child: (<FavoritesFragment
+        song={song}
+        isSongPlaying={isSongPlaying}
+      />),
+    }, {
+      id: 'history',
+      display: 'History',
+      child: (<div>History</div>),
+    }, {
+      id: 'settings',
+      display: 'Settings',
+      child: (<div>Settings</div>),
+    }, {
+      id: 'about',
+      display: 'About',
+      child: <AboutFragment />,
+    },
+  ];
   return (
-    <TabbedContainer tabs={ACCOUNT_TABS} selectedTabId={selectedTabId} />
+    <TabbedContainer
+      tabs={accountTabs}
+      selectedTabId={selectedTabId}
+    />
   );
 };
 
 LoggedInTabs.propTypes = {
+  isSongPlaying: PropTypes.bool.isRequired,
   selectedTabId: PropTypes.string.isRequired,
+  song: PropTypes.objectOf(PropTypes.any).isRequired,
 };

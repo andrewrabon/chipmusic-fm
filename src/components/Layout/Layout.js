@@ -19,7 +19,12 @@ const AppWithAuthentication = withAuthentication((props) => {
       {(authUser) => (
         <>
           <SEO title={title} />
-          <App pageId={pageId} authUser={authUser} {...props} />
+          <App
+            authUser={authUser}
+            database={props.firebase.db}
+            pageId={pageId}
+            {...props}
+          />
         </>
       )}
     </AuthUserContext.Consumer>

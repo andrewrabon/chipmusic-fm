@@ -177,7 +177,7 @@ table td .material-icons {
   z-index: -1;
   content: ' ';
 }
-.layout-song--loading .giphy-attribution {
+.layout-song--loading-gif .giphy-attribution {
   visibility: hidden;
 }
 .layout-page {

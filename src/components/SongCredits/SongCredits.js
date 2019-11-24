@@ -48,10 +48,18 @@ export const SongCredits = (props) => {
 };
 
 SongCredits.propTypes = {
-  artist: PropTypes.string.isRequired,
-  favoriteCount: PropTypes.number.isRequired,
-  href: PropTypes.string.isRequired,
+  artist: PropTypes.string,
+  favoriteCount: PropTypes.number,
+  href: PropTypes.string,
   isVisible: PropTypes.bool.isRequired,
-  name: PropTypes.string.isRequired,
-  playCount: PropTypes.number.isRequired,
+  name: PropTypes.string,
+  playCount: PropTypes.number,
+};
+
+SongCredits.defaultProps = {
+  artist: '',
+  favoriteCount: 0,
+  href: '/',
+  name: '',
+  playCount: 0,
 };

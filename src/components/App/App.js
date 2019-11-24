@@ -9,15 +9,8 @@ import { LoggedOutTabs } from 'components/LoggedOutTabs';
 import giphy from 'images/giphy.png';
 import './App.css';
 
-const FAKE_SONG = {
-  artist: 'Solomonster',
-  favoriteCount: 6,
-  link: 'https://chipmusic.org/Solomonster/music/dont-fall-down',
-  name: 'Don\'t Fall Down',
-  playCount: 14,
-  file: {
-    url: 'https://chipmusic.s3.amazonaws.com/music/2016/04/solomonster_dont-fall-down.mp3',
-  },
+const EMPTY_SONG = {
+  file: {},
 };
 
 export class App extends Component {
@@ -31,16 +24,25 @@ export class App extends Component {
         url: undefined,
       },
       gifStill: 'https://i.imgur.com/GmgOsB3.png',
-      hasLoadedSong: true, // This is to trick Gatsby into rendering SongCredits for no-JS mode.
+      hasLoadedSong: false,
+      history: [],
       isErrorBarVisible: false,
-      song: FAKE_SONG,
+      isSongPlaying: false,
+      song: EMPTY_SONG,
     };
+
+    this.fetchGif = this.fetchGif.bind(this);
+    this.fetchSong = this.fetchSong.bind(this);
+    this.handlePlay = this.handlePlay.bind(this);
+    this.handlePause = this.handlePause.bind(this);
     this.handleSkipNext = this.handleSkipNext.bind(this);
     this.handleSkipPrevious = this.handleSkipPrevious.bind(this);
+    this.handleSongLoaded = this.handleSongLoaded.bind(this);
     this.onNavigationButtonClick = this.onNavigationButtonClick.bind(this);
   }
 
   componentDidMount() {
+    this.fetchSong();
     this.fetchGif();
   }
 
@@ -80,52 +82,97 @@ export class App extends Component {
     });
   }
 
-  handleSkipNext() {
-    this.fetchGif();
+  async fetchSong() {
+    const { database } = this.props;
+    const { history } = this.state;
+    const lengthSnapchat = await database.ref('/music/length').once('value');
+    const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
+    const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
+    const songSnapchat = await songsRef.once('value');
+    const currentSong = songSnapchat.val();
     this.setState({
-      hasLoadedSong: false,
-      isErrorBarVisible: true,
-      song: {
-        link: 'https://chipmusic.org/Azuria/music/day-in-dream-oh-well',
-        file: {
-          url: 'https://chipmusic.s3.amazonaws.com/music/2012/04/azuria_day-in-dream-oh-well_1.mp3',
-        },
-        artist: 'Azuria',
-        name: 'Day In Dream (Oh Well)',
-        favoriteCount: 0,
-        playCount: 2,
-      },
+      history: history.concat([currentSong]),
+      song: currentSong,
     });
   }
 
-  handleSkipPrevious() {
-    this.fetchGif();
+  handlePlay() {
+    this.setState({
+      isSongPlaying: true,
+    });
+  }
+
+  handlePause() {
+    this.setState({
+      isSongPlaying: false,
+    });
+  }
+
+  handleSkipNext() {
     this.setState({
       hasLoadedSong: false,
-      song: FAKE_SONG,
+    });
+    this.fetchSong();
+    this.fetchGif();
+  }
+
+  handleSkipPrevious() {
+    const { hasLoadedSong, history } = this.state;
+
+    // Repeat the current song if >5 seconds have passed, or if there are no more songs left.
+    let repeatCurrentSong = false;
+    const player = null; // TODO: Put <audio> in here and pass to SongPlayer.
+    if ((player && player.currentTime > 5) || history.length - 2 < 0) {
+      repeatCurrentSong = true;
+      if (hasLoadedSong) {
+        // TODO: Cause audio player to reset.
+      }
+    }
+
+    if (!repeatCurrentSong) {
+      this.setState({
+        history: history.slice(0, history.length - 1),
+        song: history[history.length - 2],
+      });
+    }
+
+    if (hasLoadedSong) {
+      this.fetchGif();
+    }
+  }
+
+  handleSongLoaded() {
+    this.setState({
+      hasLoadedSong: true,
     });
   }
 
   render() {
     const { authUser } = this.props;
     const {
-      currentPageId, gif, gifStill, hasLoadedSong, isErrorBarVisible, song,
+      currentPageId, gif, gifStill, hasLoadedSong, isErrorBarVisible, isSongPlaying, song,
     } = this.state;
+
     let hasInvertedColors = false;
-    let layoutClassName = `layout-song ${hasLoadedSong ? '' : 'layout-song--loading'}`;
+    let layoutClassName = `layout-song ${gif.url ? '' : 'layout-song--loading-gif'}`;
     let navigationGlyph = 'account_circle';
     let backgroundGifStyle;
     if (currentPageId !== 'index') {
       hasInvertedColors = true;
       layoutClassName = 'layout-page';
       navigationGlyph = 'home';
-    } else if (hasLoadedSong) {
+    } else if (gif.url) {
       backgroundGifStyle = { backgroundImage: `url('${gif.url}')` };
+    }
+
+    let songName = song.title;
+    if (songName) {
+      songName = song.title.slice(song.artist.length + 3);
     }
 
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
-        title: song.name,
+        title: songName,
         artist: song.artist,
         artwork: [
           { src: gifStill, sizes: '480x480', type: 'image/jpg' },
@@ -155,11 +202,16 @@ export class App extends Component {
               href={song.link}
               isVisible={hasLoadedSong}
               key="songCredits"
-              name={song.name}
+              name={songName}
               playCount={song.playCount}
             />
           ) : [(authUser !== null ? (
-            <LoggedInTabs key="loggedInTabs" selectedTabId={currentPageId} />
+            <LoggedInTabs
+              isSongPlaying={isSongPlaying}
+              key="loggedInTabs"
+              selectedTabId={currentPageId}
+              song={song}
+            />
           ) : (
             <LoggedOutTabs key="loggedOutTabs" selectedTabId={currentPageId} />
           ))]}
@@ -175,9 +227,11 @@ export class App extends Component {
           onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
         />
         <SongPlayer
+          onPlay={this.handlePlay}
+          onPause={this.handlePause}
           onSkipPrevious={this.handleSkipPrevious}
           onSkipNext={this.handleSkipNext}
-          onSongLoaded={() => this.setState({ hasLoadedSong: true })}
+          onSongLoaded={this.handleSongLoaded}
           song={song}
         />
       </>
@@ -187,6 +241,7 @@ export class App extends Component {
 
 App.propTypes = {
   authUser: PropTypes.objectOf(PropTypes.any),
+  database: PropTypes.objectOf(PropTypes.any).isRequired,
   pageId: PropTypes.string.isRequired,
 };
 
