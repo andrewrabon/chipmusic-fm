@@ -212,6 +212,12 @@ export class App extends Component {
       navigationGlyph = 'home';
     } else if (gif.url) {
       backgroundGifStyle = { backgroundImage: `url('${gif.url}')` };
+      if (hasLoadedSong && !isSongPlaying) {
+        backgroundGifStyle = {
+          backgroundImage: `url('${still}')`,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        };
+      }
     }
 
     let songName = song.title;
