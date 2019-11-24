@@ -12,6 +12,16 @@
   background: black;
   text-align: center;
   font-size: 1rem;
+  opacity: 0.5;
+	transition: all 0.3s ease-in-out;
+}
+.player:hover {
+  opacity: 1.0;
+}
+.player [disabled],
+.player__control--disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 .player__scrubber {
   -webkit-appearance: none;

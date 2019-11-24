@@ -178,7 +178,7 @@ table td .material-icons {
   content: ' ';
 }
 .layout-song--loading-gif .giphy-attribution {
-  visibility: hidden;
+  opacity: 0;
 }
 .layout-page {
   position: absolute;
@@ -189,14 +189,17 @@ table td .material-icons {
   margin-bottom: 2rem;
 }
 .giphy-attribution {
+  opacity: 1.0;
   position: absolute;
   right: 0;
   bottom: 6px;
   left: 0;
   text-align: center;
+	transition: all 0.1s ease-in-out;
 }
 .giphy-attribution > a {
   opacity: 0.7;
+	transition: all 0.1s ease-in-out;
 }
 .giphy-attribution > a:hover {
   opacity: 1.0;

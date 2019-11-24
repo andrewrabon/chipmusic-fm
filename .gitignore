@@ -11,4 +11,5 @@ package-lock.json
 
 # Gatsby
 .cache/
+.firebase/
 public/

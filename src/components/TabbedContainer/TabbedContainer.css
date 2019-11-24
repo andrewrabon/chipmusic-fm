@@ -10,7 +10,7 @@
 }
 .tabbed-container__tab {
   display: inline-block;
-  width: 100%;
+  width: calc(100% - 1px);
   padding: 1.5rem 1rem;
   border: none;
   border-bottom: 3px solid #eee;

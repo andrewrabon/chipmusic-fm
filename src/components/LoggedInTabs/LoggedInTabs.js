@@ -22,7 +22,7 @@ export const LoggedInTabs = (props) => {
     }, {
       id: 'settings',
       display: 'Settings',
-      child: (<div>Settings</div>),
+      child: (<div>Coming soon.</div>),
     }, {
       id: 'about',
       display: 'About',

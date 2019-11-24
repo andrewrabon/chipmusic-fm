@@ -3,12 +3,12 @@
   position: absolute;
   bottom: 2rem;
   left: 2rem;
-  /* viewport - player width - (2rem margins * 3) */
-  max-width: calc(100vw - 400px - 6rem);
+  max-width: calc(100vw - 400px - 6rem); /* viewport - player width - (2rem margins * 3) */
   height: 98px;
   color: white;
   font-family: 'Josefin Sans';
   font-weight: bold;
+	transition: all 0.3s ease-in-out;
 }
 .song-credits h1,
 .song-credits h2,

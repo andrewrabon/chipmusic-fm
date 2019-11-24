@@ -7,12 +7,13 @@ export const SongCredits = (props) => {
     artist,
     favoriteCount,
     href,
+    isEmpty,
     isVisible,
     name,
     playCount,
   } = props;
 
-  const songCreditsVisibleStyle = isVisible ? 'song-credits--visible' : '';
+  const songCreditsVisibleClassName = isVisible ? 'song-credits--visible' : '';
   const favoritesMarkup = favoriteCount === 0 ? undefined : (
     <>
       {' '}
@@ -26,9 +27,12 @@ export const SongCredits = (props) => {
 
   return (
     <a
-      className={`song-credits ${songCreditsVisibleStyle}`}
+      className={`song-credits ${songCreditsVisibleClassName}`}
       href={href}
       rel="noopener noreferrer"
+      style={{
+        display: isEmpty ? 'none' : undefined,
+      }}
       target="_blank"
     >
       <h1>{artist}</h1>
@@ -51,6 +55,7 @@ SongCredits.propTypes = {
   artist: PropTypes.string,
   favoriteCount: PropTypes.number,
   href: PropTypes.string,
+  isEmpty: PropTypes.bool,
   isVisible: PropTypes.bool.isRequired,
   name: PropTypes.string,
   playCount: PropTypes.number,
@@ -60,6 +65,7 @@ SongCredits.defaultProps = {
   artist: '',
   favoriteCount: 0,
   href: '/',
+  isEmpty: false,
   name: '',
   playCount: 0,
 };

@@ -12,6 +12,7 @@
   color: white;
   z-index: 1;
   line-height: 1.5;
+	transition: all 0.3s ease-in-out;
 }
 .error-bar button {
   background: none;

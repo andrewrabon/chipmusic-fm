@@ -10,11 +10,17 @@ import defaultStill from 'images/defaultStill.png';
 import giphy from 'images/giphy.png';
 import './App.css';
 
+const EMPTY_SONG = {
+  isEmpty: true,
+  file: {},
+};
+
 export class App extends Component {
   constructor(props) {
     super(props);
     const { pageId } = props;
     this.state = {
+      areControlsDisabled: true,
       currentPageId: pageId,
       gif: {
         link: undefined,
@@ -26,9 +32,7 @@ export class App extends Component {
       isSongPlaying: false,
       scrubberPosition: 0,
       shouldSongAutoplay: false,
-      song: {
-        file: {},
-      },
+      song: EMPTY_SONG,
       still: defaultStill,
     };
 
@@ -87,18 +91,17 @@ export class App extends Component {
   }
 
   async fetchSong() {
+    this.setState({
+      hasLoadedSong: false,
+      song: EMPTY_SONG,
+    });
     const { database } = this.props;
-    const { hasLoadedSong, history } = this.state;
+    const { history } = this.state;
     const lengthSnapchat = await database.ref('/music/length').once('value');
     const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
     const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
     const songSnapchat = await songsRef.once('value');
     const currentSong = songSnapchat.val();
-
-    if (hasLoadedSong) {
-      this.audioRef.current.pause();
-      this.audioRef.current.currentTime = 0;
-    }
 
     this.setState({
       history: history.concat([currentSong]),
@@ -123,14 +126,20 @@ export class App extends Component {
 
   handleScrubberChange(newTime) {
     this.audioRef.current.currentTime = newTime;
+    this.setState({
+      areControlsDisabled: true,
+    });
   }
 
   handleSkipNext() {
+    this.audioRef.current.pause();
     this.setState({
+      areControlsDisabled: true,
       hasLoadedSong: false,
+    }, () => {
+      this.fetchSong();
+      this.fetchGif();
     });
-    this.fetchSong();
-    this.fetchGif();
   }
 
   handleSkipPrevious() {
@@ -162,6 +171,7 @@ export class App extends Component {
   handleSongLoaded() {
     const { shouldSongAutoplay } = this.state;
     this.setState({
+      areControlsDisabled: false,
       hasLoadedSong: true,
     });
     if (shouldSongAutoplay) {
@@ -171,6 +181,7 @@ export class App extends Component {
 
   handleTimeUpdate(event) {
     this.setState({
+      areControlsDisabled: false,
       scrubberPosition: event.target.currentTime,
     });
   }
@@ -178,6 +189,7 @@ export class App extends Component {
   render() {
     const { authUser } = this.props;
     const {
+      areControlsDisabled,
       currentPageId,
       gif,
       hasLoadedSong,
@@ -237,6 +249,7 @@ export class App extends Component {
               artist={song.artist}
               favoriteCount={song.favoriteCount}
               href={song.link}
+              isEmpty={song.isEmpty}
               isVisible={hasLoadedSong}
               key="songCredits"
               name={songName}
@@ -271,6 +284,7 @@ export class App extends Component {
           src={song.file.url}
         />
         <SongPlayer
+          areControlsDisabled={areControlsDisabled}
           duration={duration}
           isSongPlaying={isSongPlaying}
           onScrubberChange={this.handleScrubberChange}
@@ -279,6 +293,9 @@ export class App extends Component {
           onSkipPrevious={this.handleSkipPrevious}
           onSkipNext={this.handleSkipNext}
           scrubberPosition={scrubberPosition}
+          style={{
+            opacity: hasInvertedColors ? 1 : undefined,
+          }}
           song={song}
         />
       </>

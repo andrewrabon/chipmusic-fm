@@ -4,6 +4,7 @@ import './SongPlayer.css';
 
 export const SongPlayer = (props) => {
   const {
+    areControlsDisabled,
     duration,
     isSongPlaying,
     onPlay,
@@ -13,6 +14,7 @@ export const SongPlayer = (props) => {
     onSkipNext,
     scrubberPosition,
     song,
+    style,
   } = props;
 
   const handleScrubberChange = (event) => {
@@ -28,9 +30,10 @@ export const SongPlayer = (props) => {
   };
 
   return (
-    <div className="player">
+    <div className="player" style={style}>
       <input
         className="player__scrubber"
+        disabled={areControlsDisabled}
         min="0"
         max={duration > 0 ? duration : 0}
         onChange={handleScrubberChange}
@@ -40,7 +43,7 @@ export const SongPlayer = (props) => {
       />
       <a
         href={song.file.url}
-        className="player__control"
+        className={`player__control ${areControlsDisabled ? 'player__control--disabled' : ''}`}
         rel="noopener noreferrer"
         target="_blank"
         download={song.name}
@@ -49,6 +52,7 @@ export const SongPlayer = (props) => {
       </a>
       <button
         className="player__control"
+        disabled={areControlsDisabled}
         onClick={onSkipPrevious}
         type="button"
       >
@@ -56,6 +60,7 @@ export const SongPlayer = (props) => {
       </button>
       <button
         className="player__control"
+        disabled={areControlsDisabled}
         onClick={handlePlayPauseClick}
         type="button"
       >
@@ -65,12 +70,17 @@ export const SongPlayer = (props) => {
       </button>
       <button
         className="player__control"
+        disabled={areControlsDisabled}
         type="button"
         onClick={onSkipNext}
       >
         <span className="material-icons">skip_next</span>
       </button>
-      <button className="player__control" type="button">
+      <button
+        className="player__control"
+        disabled={areControlsDisabled}
+        type="button"
+      >
         <span className="material-icons">favorite_border</span>
       </button>
     </div>
@@ -78,6 +88,7 @@ export const SongPlayer = (props) => {
 };
 
 SongPlayer.propTypes = {
+  areControlsDisabled: PropTypes.bool.isRequired,
   duration: PropTypes.number.isRequired,
   isSongPlaying: PropTypes.bool.isRequired,
   onScrubberChange: PropTypes.func.isRequired,
@@ -87,4 +98,9 @@ SongPlayer.propTypes = {
   onSkipPrevious: PropTypes.func.isRequired,
   scrubberPosition: PropTypes.number.isRequired,
   song: PropTypes.objectOf(PropTypes.any).isRequired,
+  style: PropTypes.objectOf(PropTypes.any),
+};
+
+SongPlayer.defaultProps = {
+  style: {},
 };
