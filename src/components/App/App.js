@@ -28,7 +28,7 @@ export class App extends Component {
       history: [],
       isErrorBarVisible: false,
       isSongPlaying: false,
-      // shouldSongAutoplay: false,
+      shouldSongAutoplay: false,
       scrubberPosition: 0,
       song: EMPTY_SONG,
     };
@@ -88,7 +88,7 @@ export class App extends Component {
 
   async fetchSong() {
     const { database } = this.props;
-    const { history } = this.state;
+    const { history, shouldSongAutoplay } = this.state;
     const lengthSnapchat = await database.ref('/music/length').once('value');
     const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
     const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
@@ -97,13 +97,18 @@ export class App extends Component {
     this.setState({
       history: history.concat([currentSong]),
       song: currentSong,
-    }, this.handlePlay);
+    }, () => {
+      if (shouldSongAutoplay) {
+        this.handlePlay();
+      }
+    });
   }
 
   handlePlay() {
     this.audioRef.current.play();
     this.setState({
       isSongPlaying: true,
+      shouldSongAutoplay: true,
     });
   }
 
@@ -135,7 +140,7 @@ export class App extends Component {
     if ((player && player.currentTime > 5) || history.length - 2 < 0) {
       repeatCurrentSong = true;
       if (hasLoadedSong) {
-        // TODO: Cause audio player to reset.
+        this.audioRef.current.currentTime = 0;
       }
     }
 
