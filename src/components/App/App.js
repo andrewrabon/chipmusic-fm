@@ -6,12 +6,9 @@ import { SongCredits } from 'components/SongCredits';
 import { SongPlayer } from 'components/SongPlayer';
 import { LoggedInTabs } from 'components/LoggedInTabs';
 import { LoggedOutTabs } from 'components/LoggedOutTabs';
+import defaultStill from 'images/defaultStill.png';
 import giphy from 'images/giphy.png';
 import './App.css';
-
-const EMPTY_SONG = {
-  file: {},
-};
 
 export class App extends Component {
   constructor(props) {
@@ -23,14 +20,16 @@ export class App extends Component {
         link: undefined,
         url: undefined,
       },
-      gifStill: 'https://i.imgur.com/GmgOsB3.png',
       hasLoadedSong: false,
       history: [],
       isErrorBarVisible: false,
       isSongPlaying: false,
-      shouldSongAutoplay: false,
       scrubberPosition: 0,
-      song: EMPTY_SONG,
+      shouldSongAutoplay: false,
+      song: {
+        file: {},
+      },
+      still: defaultStill,
     };
 
     this.audioRef = React.createRef();
@@ -42,6 +41,7 @@ export class App extends Component {
     this.handleSkipNext = this.handleSkipNext.bind(this);
     this.handleSkipPrevious = this.handleSkipPrevious.bind(this);
     this.handleSongLoaded = this.handleSongLoaded.bind(this);
+    this.handleTimeUpdate = this.handleTimeUpdate.bind(this);
     this.onNavigationButtonClick = this.onNavigationButtonClick.bind(this);
   }
 
@@ -82,25 +82,27 @@ export class App extends Component {
         link: gif.data.url,
         url: gif.data.image_url,
       },
-      gifStill: gif.data.images['480w_still'].url,
+      still: gif.data.images['480w_still'].url,
     });
   }
 
   async fetchSong() {
     const { database } = this.props;
-    const { history, shouldSongAutoplay } = this.state;
+    const { hasLoadedSong, history } = this.state;
     const lengthSnapchat = await database.ref('/music/length').once('value');
     const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
     const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
     const songSnapchat = await songsRef.once('value');
     const currentSong = songSnapchat.val();
+
+    if (hasLoadedSong) {
+      this.audioRef.current.pause();
+      this.audioRef.current.currentTime = 0;
+    }
+
     this.setState({
       history: history.concat([currentSong]),
       song: currentSong,
-    }, () => {
-      if (shouldSongAutoplay) {
-        this.handlePlay();
-      }
     });
   }
 
@@ -136,7 +138,7 @@ export class App extends Component {
 
     // Repeat the current song if >5 seconds have passed, or if there are no more songs left.
     let repeatCurrentSong = false;
-    const player = null; // TODO: Put <audio> in here and pass to SongPlayer.
+    const player = this.audioRef.current; // TODO: Put <audio> in here and pass to SongPlayer.
     if ((player && player.currentTime > 5) || history.length - 2 < 0) {
       repeatCurrentSong = true;
       if (hasLoadedSong) {
@@ -149,16 +151,27 @@ export class App extends Component {
         history: history.slice(0, history.length - 1),
         song: history[history.length - 2],
       }, this.handlePlay);
+      this.fetchGif();
     }
 
     if (hasLoadedSong) {
-      this.fetchGif();
+      // this.fetchGif();
     }
   }
 
   handleSongLoaded() {
+    const { shouldSongAutoplay } = this.state;
     this.setState({
       hasLoadedSong: true,
+    });
+    if (shouldSongAutoplay) {
+      this.handlePlay();
+    }
+  }
+
+  handleTimeUpdate(event) {
+    this.setState({
+      scrubberPosition: event.target.currentTime,
     });
   }
 
@@ -167,13 +180,15 @@ export class App extends Component {
     const {
       currentPageId,
       gif,
-      gifStill,
       hasLoadedSong,
       isErrorBarVisible,
       isSongPlaying,
       scrubberPosition,
       song,
+      still,
     } = this.state;
+
+    const duration = hasLoadedSong ? this.audioRef.current.duration : 0;
 
     let hasInvertedColors = false;
     let layoutClassName = `layout-song ${gif.url ? '' : 'layout-song--loading-gif'}`;
@@ -197,7 +212,7 @@ export class App extends Component {
         title: songName,
         artist: song.artist,
         artwork: [
-          { src: gifStill, sizes: '480x480', type: 'image/jpg' },
+          { src: still, sizes: '480x480' },
         ],
       });
       navigator.mediaSession.setActionHandler('play', this.handlePlay);
@@ -250,11 +265,12 @@ export class App extends Component {
         />
         <audio
           onCanPlay={this.handleSongLoaded}
-          onTimeUpdate={(event) => this.setState({ scrubberPosition: event.target.currentTime })}
+          onTimeUpdate={this.handleTimeUpdate}
           ref={this.audioRef}
           src={song.file.url}
         />
         <SongPlayer
+          duration={duration}
           isSongPlaying={isSongPlaying}
           onScrubberChange={this.handleScrubberChange}
           onPlay={this.handlePlay}

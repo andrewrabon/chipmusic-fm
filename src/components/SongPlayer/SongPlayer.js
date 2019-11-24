@@ -4,6 +4,7 @@ import './SongPlayer.css';
 
 export const SongPlayer = (props) => {
   const {
+    duration,
     isSongPlaying,
     onPlay,
     onPause,
@@ -31,6 +32,7 @@ export const SongPlayer = (props) => {
       <input
         className="player__scrubber"
         min="0"
+        max={duration > 0 ? duration : 0}
         onChange={handleScrubberChange}
         step="0.01"
         type="range"
@@ -76,6 +78,7 @@ export const SongPlayer = (props) => {
 };
 
 SongPlayer.propTypes = {
+  duration: PropTypes.number.isRequired,
   isSongPlaying: PropTypes.bool.isRequired,
   onScrubberChange: PropTypes.func.isRequired,
   onPlay: PropTypes.func.isRequired,
