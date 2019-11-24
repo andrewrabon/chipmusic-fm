@@ -265,6 +265,7 @@ export class App extends Component {
         />
         <audio
           onCanPlay={this.handleSongLoaded}
+          onEnded={this.handleSkipNext}
           onTimeUpdate={this.handleTimeUpdate}
           ref={this.audioRef}
           src={song.file.url}

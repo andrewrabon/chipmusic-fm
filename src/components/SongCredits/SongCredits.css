@@ -3,6 +3,7 @@
   position: absolute;
   bottom: 2rem;
   left: 2rem;
+  max-width: calc(100vw - 400px - 6rem);
   color: white;
   font-family: 'Josefin Sans';
   font-weight: bold;
@@ -12,6 +13,9 @@
 .song-credits h3 {
   font-size: 1.5rem;
   line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .song-credits--visible {
   opacity: 1.0;
