@@ -207,7 +207,7 @@ export class App extends Component {
       songName = song.title.slice(song.artist.length + 3);
     }
 
-    if ('mediaSession' in navigator) {
+    if (hasLoadedSong && 'mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: songName,
         artist: song.artist,

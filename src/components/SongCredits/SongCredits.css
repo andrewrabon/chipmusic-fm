@@ -3,7 +3,9 @@
   position: absolute;
   bottom: 2rem;
   left: 2rem;
+  /* viewport - player width - (2rem margins * 3) */
   max-width: calc(100vw - 400px - 6rem);
+  height: 98px;
   color: white;
   font-family: 'Josefin Sans';
   font-weight: bold;
@@ -12,7 +14,7 @@
 .song-credits h2,
 .song-credits h3 {
   font-size: 1.5rem;
-  line-height: 1.25;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
