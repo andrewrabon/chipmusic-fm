@@ -9,7 +9,7 @@
   background: 0;
   cursor: pointer;
   opacity: 0.5;
-	transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .navigation-button:focus,
 .navigation-button:hover {

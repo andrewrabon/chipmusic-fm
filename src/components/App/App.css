@@ -195,11 +195,11 @@ table td .material-icons {
   bottom: 6px;
   left: 0;
   text-align: center;
-	transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
 }
 .giphy-attribution > a {
   opacity: 0.7;
-	transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
 }
 .giphy-attribution > a:hover {
   opacity: 1.0;
