@@ -11,6 +11,7 @@ export const SongCredits = (props) => {
     isVisible,
     name,
     playCount,
+    year,
   } = props;
 
   const songCreditsVisibleClassName = isVisible ? 'song-credits--visible' : '';
@@ -42,6 +43,10 @@ export const SongCredits = (props) => {
         &rdquo;
       </h2>
       <h3>
+        {year}
+        {' '}
+        &middot;
+        {' '}
         {playCount}
         {' '}
         plays
@@ -59,6 +64,7 @@ SongCredits.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   name: PropTypes.string,
   playCount: PropTypes.number,
+  year: PropTypes.number,
 };
 
 SongCredits.defaultProps = {
@@ -68,4 +74,5 @@ SongCredits.defaultProps = {
   isEmpty: false,
   name: '',
   playCount: 0,
+  year: '',
 };

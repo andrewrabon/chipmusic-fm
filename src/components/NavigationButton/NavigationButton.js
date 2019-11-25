@@ -7,6 +7,7 @@ export const NavigationButton = (props) => {
     glyph,
     hasInvertedColors,
     onClick,
+    style,
   } = props;
   const invertedClassName = hasInvertedColors ? 'navigation-button--inverted' : '';
 
@@ -14,6 +15,7 @@ export const NavigationButton = (props) => {
     <button
       className={`navigation-button ${invertedClassName}`}
       onClick={onClick}
+      style={style}
       type="button"
     >
       <span className="material-icons">{glyph}</span>
@@ -25,4 +27,9 @@ NavigationButton.propTypes = {
   glyph: PropTypes.string.isRequired,
   hasInvertedColors: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
+  style: PropTypes.objectOf(PropTypes.any),
+};
+
+NavigationButton.defaultProps = {
+  style: {},
 };

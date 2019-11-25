@@ -147,7 +147,7 @@ export class App extends Component {
 
     // Repeat the current song if >5 seconds have passed, or if there are no more songs left.
     let repeatCurrentSong = false;
-    const player = this.audioRef.current; // TODO: Put <audio> in here and pass to SongPlayer.
+    const player = this.audioRef.current;
     if ((player && player.currentTime > 5) || history.length - 2 < 0) {
       repeatCurrentSong = true;
       if (hasLoadedSong) {
@@ -161,10 +161,6 @@ export class App extends Component {
         song: history[history.length - 2],
       }, this.handlePlay);
       this.fetchGif();
-    }
-
-    if (hasLoadedSong) {
-      // this.fetchGif();
     }
   }
 
@@ -196,11 +192,13 @@ export class App extends Component {
       isErrorBarVisible,
       isSongPlaying,
       scrubberPosition,
+      shouldSongAutoplay,
       song,
       still,
     } = this.state;
 
     const duration = hasLoadedSong ? this.audioRef.current.duration : 0;
+    const isLoadedSongPaused = hasLoadedSong && !isSongPlaying;
 
     let hasInvertedColors = false;
     let layoutClassName = `layout-song ${gif.url ? '' : 'layout-song--loading-gif'}`;
@@ -212,7 +210,7 @@ export class App extends Component {
       navigationGlyph = 'home';
     } else if (gif.url) {
       backgroundGifStyle = { backgroundImage: `url('${gif.url}')` };
-      if (hasLoadedSong && !isSongPlaying) {
+      if (!isSongPlaying || !shouldSongAutoplay) {
         backgroundGifStyle = {
           backgroundImage: `url('${still}')`,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -260,6 +258,7 @@ export class App extends Component {
               key="songCredits"
               name={songName}
               playCount={song.playCount}
+              year={new Date(song.date).getFullYear()}
             />
           ) : [(authUser !== null ? (
             <LoggedInTabs
@@ -281,6 +280,9 @@ export class App extends Component {
           glyph={navigationGlyph}
           hasInvertedColors={hasInvertedColors}
           onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
+          style={{
+            opacity: hasInvertedColors || isLoadedSongPaused ? 1 : undefined,
+          }}
         />
         <audio
           onCanPlay={this.handleSongLoaded}
@@ -300,7 +302,7 @@ export class App extends Component {
           onSkipNext={this.handleSkipNext}
           scrubberPosition={scrubberPosition}
           style={{
-            opacity: hasInvertedColors ? 1 : undefined,
+            opacity: hasInvertedColors || isLoadedSongPaused ? 1 : undefined,
           }}
           song={song}
         />

@@ -3,18 +3,23 @@ import PropTypes from 'prop-types';
 import { TabbedContainer } from 'components/TabbedContainer';
 import { AboutFragment } from 'fragments/AboutFragment';
 import { FavoritesFragment } from 'fragments/FavoritesFragment';
+import { SettingsFragment } from 'fragments/SettingsFragment';
 
 export const LoggedInTabs = (props) => {
-  const { isSongPlaying, selectedTabId, song } = props;
+  const {
+    isSongPlaying, selectedTabId, song,
+  } = props;
 
   const accountTabs = [
     {
       id: 'favorites',
       display: 'Favorites',
-      child: (<FavoritesFragment
-        song={song}
-        isSongPlaying={isSongPlaying}
-      />),
+      child: (
+        <FavoritesFragment
+          song={song}
+          isSongPlaying={isSongPlaying}
+        />
+      ),
     }, {
       id: 'history',
       display: 'History',
@@ -22,7 +27,9 @@ export const LoggedInTabs = (props) => {
     }, {
       id: 'settings',
       display: 'Settings',
-      child: (<div>Coming soon.</div>),
+      child: (
+        <SettingsFragment />
+      ),
     }, {
       id: 'about',
       display: 'About',

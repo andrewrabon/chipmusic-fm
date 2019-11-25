@@ -32,10 +32,21 @@ h3 {
 p + h1,
 p + h2,
 p + h3 {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
+p + button,
 p + p {
   margin-top: 1rem;
+}
+p {
+  font-size: 1.3rem;
+  line-height: 2;
+}
+p a {
+  font-weight: bold;
+}
+p a:hover {
+  text-decoration: underline;
 }
 form input.input-error,
 form input.input-error:hover,
