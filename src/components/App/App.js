@@ -6,6 +6,7 @@ import { SongCredits } from 'components/SongCredits';
 import { SongPlayer } from 'components/SongPlayer';
 import { LoggedInTabs } from 'components/LoggedInTabs';
 import { LoggedOutTabs } from 'components/LoggedOutTabs';
+import { Utilities } from 'utils/utilities';
 import defaultStill from 'images/defaultStill.png';
 import giphy from 'images/giphy.png';
 import './App.css';
@@ -183,7 +184,7 @@ export class App extends Component {
   }
 
   render() {
-    const { authUser } = this.props;
+    const { authUser, database } = this.props;
     const {
       areControlsDisabled,
       currentPageId,
@@ -218,10 +219,7 @@ export class App extends Component {
       }
     }
 
-    let songName = song.title;
-    if (songName) {
-      songName = song.title.slice(song.artist.length + 3);
-    }
+    const songName = Utilities.getTrueSongName(song.title, song.artist);
 
     if (hasLoadedSong && 'mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
@@ -262,6 +260,8 @@ export class App extends Component {
             />
           ) : [(authUser !== null ? (
             <LoggedInTabs
+              authUser={authUser}
+              database={database}
               isSongPlaying={isSongPlaying}
               key="loggedInTabs"
               selectedTabId={currentPageId}

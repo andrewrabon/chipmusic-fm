@@ -7,7 +7,7 @@ import { SettingsFragment } from 'fragments/SettingsFragment';
 
 export const LoggedInTabs = (props) => {
   const {
-    isSongPlaying, selectedTabId, song,
+    authUser, database, isSongPlaying, selectedTabId, song,
   } = props;
 
   const accountTabs = [
@@ -16,6 +16,8 @@ export const LoggedInTabs = (props) => {
       display: 'Favorites',
       child: (
         <FavoritesFragment
+          authUser={authUser}
+          database={database}
           song={song}
           isSongPlaying={isSongPlaying}
         />
@@ -45,6 +47,8 @@ export const LoggedInTabs = (props) => {
 };
 
 LoggedInTabs.propTypes = {
+  authUser: PropTypes.objectOf(PropTypes.any).isRequired,
+  database: PropTypes.objectOf(PropTypes.any).isRequired,
   isSongPlaying: PropTypes.bool.isRequired,
   selectedTabId: PropTypes.string.isRequired,
   song: PropTypes.objectOf(PropTypes.any).isRequired,

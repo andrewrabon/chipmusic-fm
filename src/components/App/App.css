@@ -142,7 +142,10 @@ table td {
 table td .material-icons {
   float: right;
   width: 26px;
-  margin-left: 1rem;
+}
+table td .material-icons:active,
+table td .material-icons:focus {
+  outline: 1px solid #4D90FE;
 }
 @font-face {
   font-family: 'Material Icons';
