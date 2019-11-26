@@ -5,18 +5,18 @@ import './TabbedContainer.css';
 export class TabbedContainer extends Component {
   constructor(props) {
     super(props);
-    const { tabs, selectedTabId } = props;
+    const { children, selectedTabId } = props;
     let currentTabIndex = 0;
     if (selectedTabId) {
-      tabs.forEach((tab, index) => {
-        if (tab.id === selectedTabId) {
+      children.forEach((tab, index) => {
+        if (tab.props.id === selectedTabId) {
           currentTabIndex = index;
         }
       });
     }
     this.state = {
       currentTabIndex,
-      currentTabChild: tabs[currentTabIndex].child,
+      currentTabChild: children[currentTabIndex],
     };
     this.onTabClick = this.onTabClick.bind(this);
 
@@ -32,29 +32,29 @@ export class TabbedContainer extends Component {
     // everyone else.
     event.preventDefault();
     event.stopPropagation();
-    const { tabs } = this.props;
-    const { id, child } = tabs[index];
+    const { children } = this.props;
+    const child = children[index];
     this.setState({
       currentTabIndex: index,
       currentTabChild: child,
     });
-    window.history.pushState({}, '', `/${id}`);
+    window.history.pushState({}, '', `/${child.props.id}`);
   }
 
   render() {
-    const { tabs } = this.props;
+    const { children } = this.props;
     const { currentTabIndex, currentTabChild } = this.state;
 
     return (
       <>
         <ul className="tabbed-container">
           {
-            tabs.map((tab, index) => {
+            children.map((tab, index) => {
               const selectedClassName = index === currentTabIndex ? 'tabbed-container--selected' : '';
               return (
-                <li className={selectedClassName} key={tab.id}>
-                  <a href={`/${tab.id}`} className="tabbed-container__tab" onClick={(event) => this.onTabClick(event, index)}>
-                    {tab.display}
+                <li className={selectedClassName} key={tab.props.id}>
+                  <a href={`/${tab.props.id}`} className="tabbed-container__tab" onClick={(event) => this.onTabClick(event, index)}>
+                    {tab.props.display}
                   </a>
                 </li>
               );
@@ -70,6 +70,6 @@ export class TabbedContainer extends Component {
 }
 
 TabbedContainer.propTypes = {
+  children: PropTypes.arrayOf(PropTypes.any).isRequired,
   selectedTabId: PropTypes.string.isRequired,
-  tabs: PropTypes.arrayOf(PropTypes.any).isRequired,
 };

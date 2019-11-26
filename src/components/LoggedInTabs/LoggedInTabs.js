@@ -8,49 +8,38 @@ import { SettingsFragment } from 'fragments/SettingsFragment';
 
 export const LoggedInTabs = (props) => {
   const {
-    authUser, database, isSongPlaying, selectedTabId, song,
+    authUser, database, isSongPlaying, onPlayPauseSong, selectedTabId, song,
   } = props;
 
-  const accountTabs = [
-    {
-      id: 'favorites',
-      display: 'Favorites',
-      child: (
-        <FavoritesFragment
-          authUser={authUser}
-          database={database}
-          song={song}
-          isSongPlaying={isSongPlaying}
-        />
-      ),
-    }, {
-      id: 'history',
-      display: 'History',
-      child: (
-        <HistoryFragment
-          authUser={authUser}
-          database={database}
-          song={song}
-          isSongPlaying={isSongPlaying}
-        />
-      ),
-    }, {
-      id: 'settings',
-      display: 'Settings',
-      child: (
-        <SettingsFragment />
-      ),
-    }, {
-      id: 'about',
-      display: 'About',
-      child: <AboutFragment />,
-    },
-  ];
   return (
-    <TabbedContainer
-      tabs={accountTabs}
-      selectedTabId={selectedTabId}
-    />
+    <TabbedContainer selectedTabId={selectedTabId}>
+      <FavoritesFragment
+        authUser={authUser}
+        database={database}
+        display="Favorites"
+        id="favorites"
+        isSongPlaying={isSongPlaying}
+        onPlayPauseSong={onPlayPauseSong}
+        song={song}
+      />
+      <HistoryFragment
+        authUser={authUser}
+        database={database}
+        display="History"
+        song={song}
+        id="history"
+        isSongPlaying={isSongPlaying}
+        onPlayPauseSong={onPlayPauseSong}
+      />
+      <SettingsFragment
+        display="Settings"
+        id="settings"
+      />
+      <AboutFragment
+        display="About"
+        id="about"
+      />
+    </TabbedContainer>
   );
 };
 
@@ -58,6 +47,7 @@ LoggedInTabs.propTypes = {
   authUser: PropTypes.objectOf(PropTypes.any).isRequired,
   database: PropTypes.objectOf(PropTypes.any).isRequired,
   isSongPlaying: PropTypes.bool.isRequired,
+  onPlayPauseSong: PropTypes.func.isRequired,
   selectedTabId: PropTypes.string.isRequired,
   song: PropTypes.objectOf(PropTypes.any).isRequired,
 };

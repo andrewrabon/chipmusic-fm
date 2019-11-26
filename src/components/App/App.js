@@ -40,6 +40,7 @@ export class App extends Component {
     this.audioRef = React.createRef();
     this.fetchGif = this.fetchGif.bind(this);
     this.fetchSong = this.fetchSong.bind(this);
+    this.handlePlayPause = this.handlePlayPause.bind(this);
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
     this.handleScrubberChange = this.handleScrubberChange.bind(this);
@@ -91,23 +92,39 @@ export class App extends Component {
     });
   }
 
-  async fetchSong() {
+  async fetchSong(providedSong) {
+    const { database } = this.props;
+    const { history } = this.state;
+
     this.setState({
       hasLoadedSong: false,
       song: EMPTY_SONG,
     });
-    const { database } = this.props;
-    const { history } = this.state;
-    const lengthSnapchat = await database.ref('/music/length').once('value');
-    const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
-    const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
-    const songSnapchat = await songsRef.once('value');
-    const currentSong = songSnapchat.val();
+
+    let currentSong = providedSong;
+    if (typeof providedSong === 'undefined') {
+      const lengthSnapchat = await database.ref('/music/length').once('value');
+      const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
+      const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
+      const songSnapchat = await songsRef.once('value');
+      currentSong = songSnapchat.val();
+    }
 
     this.setState({
       history: history.concat([currentSong]),
       song: currentSong,
     });
+  }
+
+  handlePlayPause(providedSong) {
+    const { isSongPlaying, song } = this.state;
+    if (song.uuid !== providedSong.uuid) {
+      this.fetchSong(providedSong);
+    } else if (isSongPlaying) {
+      this.handlePause();
+    } else {
+      this.handlePlay();
+    }
   }
 
   handlePlay() {
@@ -264,6 +281,7 @@ export class App extends Component {
               database={database}
               isSongPlaying={isSongPlaying}
               key="loggedInTabs"
+              onPlayPauseSong={this.handlePlayPause}
               selectedTabId={currentPageId}
               song={song}
             />

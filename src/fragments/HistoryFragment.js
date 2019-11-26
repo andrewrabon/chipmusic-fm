@@ -8,6 +8,7 @@ export class HistoryFragment extends Component {
   constructor() {
     super();
     this.state = {
+      hasLoadedSongs: false,
       listenHistory: [],
     };
     this.fetchUserSettings = this.fetchUserSettings.bind(this);
@@ -24,29 +25,49 @@ export class HistoryFragment extends Component {
     const userSettingsSnapchat = await database.ref(`/userSettings/${authUser.uid}`).once('value');
     const userSettings = userSettingsSnapchat.val();
     let listenHistory = [];
-    if (userSettings.listenHistory) {
+    if (userSettings && userSettings.listenHistory) {
       listenHistory = userSettings.listenHistory;
     }
-    this.setState({ listenHistory });
+    this.setState({
+      hasLoadedSongs: true,
+      listenHistory,
+    });
   }
 
   handleFavorite(event, song) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('fave', song.title);
   }
 
   handlePlayPause(event, song) {
-    console.log('play', song.title);
+    const { onPlayPauseSong } = this.props;
+    onPlayPauseSong(song);
   }
 
   render() {
-    const { listenHistory } = this.state;
+    const { hasLoadedSongs, listenHistory } = this.state;
+    let message;
+    if (!hasLoadedSongs) {
+      message = 'Loading...';
+    } else if (listenHistory.length === 0) {
+      message = (
+        <>
+          <p>
+            You haven&apos;t listened to any songs yet.
+            {' '}
+            <span role="img" aria-label="Thinking">
+              🤔
+            </span>
+          </p>
+          <p>
+            What are you waiting for? Hit play!
+          </p>
+        </>
+      );
+    }
     return (
       <>
-        <div style={{ display: listenHistory.length ? 'none' : undefined }}>
-          Loading...
-        </div>
+        {message}
         <table style={{ display: listenHistory.length ? undefined : 'none' }}>
           <tbody>
             {
@@ -66,6 +87,10 @@ export class HistoryFragment extends Component {
                       &middot;
                       {' '}
                       {song.artist}
+                      {' '}
+                      &middot;
+                      {' '}
+                      {new Date(song.date).getFullYear()}
                     </td>
                     <td>
                       <span
@@ -95,4 +120,11 @@ export class HistoryFragment extends Component {
 HistoryFragment.propTypes = {
   authUser: PropTypes.objectOf(PropTypes.any).isRequired,
   database: PropTypes.objectOf(PropTypes.any).isRequired,
+  isSongPlaying: PropTypes.bool.isRequired,
+  onPlayPauseSong: PropTypes.func.isRequired,
+  song: PropTypes.objectOf(PropTypes.any),
+};
+
+HistoryFragment.defaultProps = {
+  song: {},
 };

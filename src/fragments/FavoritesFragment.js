@@ -8,6 +8,7 @@ export class FavoritesFragment extends Component {
   constructor() {
     super();
     this.state = {
+      hasLoadedSongs: false,
       likedSongs: {},
     };
     this.fetchUserSettings = this.fetchUserSettings.bind(this);
@@ -24,36 +25,65 @@ export class FavoritesFragment extends Component {
     const userSettingsSnapchat = await database.ref(`/userSettings/${authUser.uid}`).once('value');
     const userSettings = userSettingsSnapchat.val();
     let likedSongs = {};
-    if (userSettings.likedSongs) {
+    if (userSettings && userSettings.likedSongs) {
       likedSongs = userSettings.likedSongs;
     }
-    this.setState({ likedSongs });
+    this.setState({
+      hasLoadedSongs: true,
+      likedSongs,
+    });
   }
 
   handleFavorite(event, song) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('fave', song.title);
   }
 
   handlePlayPause(event, song) {
-    console.log('play', song.title);
+    const { onPlayPauseSong } = this.props;
+    onPlayPauseSong(song);
   }
 
   render() {
-    const { likedSongs } = this.state;
+    const { isSongPlaying, song: propsSong } = this.props;
+    const { hasLoadedSongs, likedSongs } = this.state;
     const likedSongKeys = Object.keys(likedSongs);
+
+    let message;
+    if (!hasLoadedSongs) {
+      message = 'Loading...';
+    } else if (likedSongKeys.length === 0) {
+      message = (
+        <>
+          <p>
+            You don&apos;t have any favorite songs.
+            {' '}
+            <span role="img" aria-label="Heartbroken">
+              💔
+            </span>
+          </p>
+          <p>
+            ...yet.
+            {' '}
+            <span role="img" aria-label="Wink">😉</span>
+          </p>
+        </>
+      );
+    }
+
     return (
       <>
-        <div style={{ display: likedSongKeys.length ? 'none' : undefined }}>
-          Loading...
-        </div>
-        <table style={{ display: likedSongKeys.length ? undefined : 'none' }}>
+        {message}
+        <table style={{ display: hasLoadedSongs ? undefined : 'none' }}>
           <tbody>
             {
               likedSongKeys.map((songId) => {
                 const song = likedSongs[songId];
                 const songName = Utilities.getTrueSongName(song.title, song.artist);
+                let playPauseIcon = 'play_circle_outline';
+                if (propsSong && song.uuid === propsSong.uuid && isSongPlaying) {
+                  playPauseIcon = 'pause_circle_outline';
+                }
                 return (
                   <tr
                     key={song.uuid}
@@ -68,6 +98,10 @@ export class FavoritesFragment extends Component {
                       &middot;
                       {' '}
                       {song.artist}
+                      {' '}
+                      &middot;
+                      {' '}
+                      {new Date(song.date).getFullYear()}
                     </td>
                     <td>
                       <span
@@ -81,7 +115,7 @@ export class FavoritesFragment extends Component {
                       </span>
                     </td>
                     <td>
-                      <span className="material-icons">play_circle_outline</span>
+                      <span className="material-icons">{playPauseIcon}</span>
                     </td>
                   </tr>
                 );
@@ -97,4 +131,7 @@ export class FavoritesFragment extends Component {
 FavoritesFragment.propTypes = {
   authUser: PropTypes.objectOf(PropTypes.any).isRequired,
   database: PropTypes.objectOf(PropTypes.any).isRequired,
+  isSongPlaying: PropTypes.bool.isRequired,
+  onPlayPauseSong: PropTypes.func.isRequired,
+  song: PropTypes.objectOf(PropTypes.any).isRequired,
 };

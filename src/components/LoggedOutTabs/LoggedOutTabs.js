@@ -8,24 +8,20 @@ import { RegisterFragment } from 'fragments/RegisterFragment';
 export const LoggedOutTabs = (props) => {
   const { selectedTabId } = props;
   return (
-    <TabbedContainer
-      selectedTabId={selectedTabId}
-      tabs={[
-        {
-          id: 'login',
-          display: 'Login',
-          child: <LoginFragment />,
-        }, {
-          id: 'register',
-          display: 'Register',
-          child: <RegisterFragment />,
-        }, {
-          id: 'about',
-          display: 'About',
-          child: <AboutFragment />,
-        },
-      ]}
-    />
+    <TabbedContainer selectedTabId={selectedTabId}>
+      <LoginFragment
+        display="Login"
+        id="login"
+      />
+      <RegisterFragment
+        display="Register"
+        id="register"
+      />
+      <AboutFragment
+        display="About"
+        id="about"
+      />
+    </TabbedContainer>
   );
 };
 
