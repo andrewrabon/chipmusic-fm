@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { TabbedContainer } from 'components/TabbedContainer';
 import { AboutFragment } from 'fragments/AboutFragment';
 import { FavoritesFragment } from 'fragments/FavoritesFragment';
+import { HistoryFragment } from 'fragments/HistoryFragment';
 import { SettingsFragment } from 'fragments/SettingsFragment';
 
 export const LoggedInTabs = (props) => {
@@ -25,7 +26,14 @@ export const LoggedInTabs = (props) => {
     }, {
       id: 'history',
       display: 'History',
-      child: (<div>History</div>),
+      child: (
+        <HistoryFragment
+          authUser={authUser}
+          database={database}
+          song={song}
+          isSongPlaying={isSongPlaying}
+        />
+      ),
     }, {
       id: 'settings',
       display: 'Settings',
