@@ -54,6 +54,42 @@ export class App extends Component {
   componentDidMount() {
     this.fetchSong();
     this.fetchGif();
+
+    window.addEventListener('keydown', (event) => {
+      const gatsbyFocusWrapper = document.getElementById('gatsby-focus-wrapper');
+      if (document.activeElement !== document.body
+        && document.activeElement !== gatsbyFocusWrapper) {
+        return;
+      }
+      const { song } = this.state;
+      switch (event.code) {
+        case 'KeyD':
+          if (event.shiftKey) {
+            window.open(song.file.url, '_blank');
+          }
+          break;
+        case 'Space':
+          this.handlePlayPause();
+          break;
+        case 'ArrowLeft':
+        case 'KeyK':
+          this.handleSkipPrevious();
+          break;
+        case 'ArrowRight':
+        case 'KeyJ':
+          this.handleSkipNext();
+          break;
+        case 'KeyL':
+          if (event.shiftKey) {
+            // toggleSongLike();
+          }
+          break;
+        case 'KeyV':
+          window.open(song.link, '_blank');
+          break;
+        // no default
+      }
+    });
   }
 
   onNavigationButtonClick(event, isLoggedIn) {
@@ -118,7 +154,7 @@ export class App extends Component {
 
   handlePlayPause(providedSong) {
     const { isSongPlaying, song } = this.state;
-    if (song.uuid !== providedSong.uuid) {
+    if (providedSong && song.uuid !== providedSong.uuid) {
       this.fetchSong(providedSong);
     } else if (isSongPlaying) {
       this.handlePause();
