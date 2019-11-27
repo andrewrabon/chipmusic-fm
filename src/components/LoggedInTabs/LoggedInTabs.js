@@ -17,6 +17,7 @@ export const LoggedInTabs = (props) => {
         authUser={authUser}
         database={database}
         display="Favorites"
+        glyph="favorite"
         id="favorites"
         isSongPlaying={isSongPlaying}
         onPlayPauseSong={onPlayPauseSong}
@@ -26,17 +27,20 @@ export const LoggedInTabs = (props) => {
         authUser={authUser}
         database={database}
         display="History"
-        song={song}
+        glyph="history"
         id="history"
         isSongPlaying={isSongPlaying}
+        song={song}
         onPlayPauseSong={onPlayPauseSong}
       />
       <SettingsFragment
         display="Settings"
+        glyph="settings"
         id="settings"
       />
       <AboutFragment
         display="About"
+        glyph="info"
         id="about"
       />
     </TabbedContainer>

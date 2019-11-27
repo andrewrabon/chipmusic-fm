@@ -196,13 +196,13 @@ table td .material-icons:focus {
 }
 .layout-page {
   position: absolute;
-  top: 2rem;
-  left: 2rem;
-  width: calc(100vw - 400px - 6rem);
-  min-height: calc(100vh - 4rem);
-  margin-bottom: 2rem;
+  top: calc(1rem + 58px);
+  right: 1rem;
+  left: 1rem;
+  padding-bottom: calc(98px + 2rem);
 }
 .giphy-attribution {
+  display: none;
   opacity: 1.0;
   position: absolute;
   right: 0;
@@ -217,4 +217,18 @@ table td .material-icons:focus {
 }
 .giphy-attribution > a:hover {
   opacity: 1.0;
+}
+.app--index .giphy-attribution {
+  display: block;
+}
+
+@media (min-width: 800px) {
+  .layout-page {
+    top: 2rem;
+    left: 2rem;
+    width: calc(100vw - 400px - 6rem);
+    min-height: calc(100vh - 4rem);
+    margin-bottom: 2rem;
+    padding-bottom: unset;
+  }
 }

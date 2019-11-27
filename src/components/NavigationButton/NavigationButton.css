@@ -1,7 +1,7 @@
 .navigation-button {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
   margin: -1rem;
   padding: 1rem;
   color: white;
@@ -19,4 +19,11 @@
   color: black;
   opacity: 1.0;
   transition: none;
+}
+
+@media (min-width: 800px) {
+  .navigation-button {
+    top: 2rem;
+    right: 2rem;
+  }
 }

@@ -253,7 +253,7 @@ export class App extends Component {
     }
 
     return (
-      <>
+      <div className={`app--${currentPageId}`}>
         <ErrorBar
           isVisible={isErrorBarVisible}
           message="Hello, world."
@@ -324,7 +324,7 @@ export class App extends Component {
           }}
           song={song}
         />
-      </>
+      </div>
     );
   }
 }

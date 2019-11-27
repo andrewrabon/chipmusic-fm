@@ -46,25 +46,30 @@ export class TabbedContainer extends Component {
     const { currentTabIndex, currentTabChild } = this.state;
 
     return (
-      <>
-        <ul className="tabbed-container">
+      <div className="tabbed-container">
+        <ul className="tabbed-container__list">
           {
             children.map((tab, index) => {
-              const selectedClassName = index === currentTabIndex ? 'tabbed-container--selected' : '';
+              const selectedClassName = index === currentTabIndex ? 'tabbed-container__entry--selected' : '';
               return (
                 <li className={selectedClassName} key={tab.props.id}>
                   <a href={`/${tab.props.id}`} className="tabbed-container__tab" onClick={(event) => this.onTabClick(event, index)}>
-                    {tab.props.display}
+                    <span className="tabbed-container__desktop">
+                      {tab.props.display}
+                    </span>
+                    <span className="tabbed-container__mobile material-icons">
+                      {tab.props.glyph}
+                    </span>
                   </a>
                 </li>
               );
             })
           }
         </ul>
-        <div>
+        <div className="tabbed-container__child">
           {currentTabChild}
         </div>
-      </>
+      </div>
     );
   }
 }
