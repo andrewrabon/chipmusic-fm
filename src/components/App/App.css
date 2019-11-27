@@ -178,6 +178,8 @@ table td .material-icons:focus {
   background-color: rgba(0, 0, 0, 0.25);
   background-blend-mode: multiply;
   background-position: center;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
 }
 .layout-song::after {
   position: absolute;
