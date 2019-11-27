@@ -65,7 +65,7 @@
   bottom: 2rem;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .player {
     width: 400px;
     left: unset;

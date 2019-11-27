@@ -224,7 +224,7 @@ table td .material-icons:focus {
   display: block;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .layout-page {
     top: 2rem;
     left: 2rem;

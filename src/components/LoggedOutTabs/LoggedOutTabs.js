@@ -11,14 +11,17 @@ export const LoggedOutTabs = (props) => {
     <TabbedContainer selectedTabId={selectedTabId}>
       <LoginFragment
         display="Login"
+        glyph="exit_to_app"
         id="login"
       />
       <RegisterFragment
         display="Register"
+        glyph="person_add"
         id="register"
       />
       <AboutFragment
         display="About"
+        glyph="info_outlined"
         id="about"
       />
     </TabbedContainer>

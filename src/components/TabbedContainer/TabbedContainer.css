@@ -1,3 +1,9 @@
+.tabbed-container {
+  margin-top: 8px;
+}
+.tabbed-container .material-icons {
+  width: 24px;
+}
 .tabbed-container__list {
   position: sticky;
   top: 0;
@@ -15,7 +21,7 @@
 .tabbed-container__tab {
   display: inline-block;
   width: 100%;
-  padding: 1.5rem 1rem 0.5rem;
+  padding: 1.25rem 1rem 0.5rem;
   border: none;
   border-bottom: 3px solid #eee;
   line-height: 1.25;
@@ -35,7 +41,7 @@
   display: none;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .tabbed-container {
     max-width: none;
   }

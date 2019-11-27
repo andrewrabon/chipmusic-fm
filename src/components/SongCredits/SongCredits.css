@@ -24,7 +24,7 @@
   opacity: 1.0;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .song-credits {
     top: unset;
     bottom: 2rem;

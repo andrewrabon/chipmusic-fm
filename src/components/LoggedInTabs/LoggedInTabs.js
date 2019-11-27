@@ -40,7 +40,7 @@ export const LoggedInTabs = (props) => {
       />
       <AboutFragment
         display="About"
-        glyph="info"
+        glyph="info_outlined"
         id="about"
       />
     </TabbedContainer>
