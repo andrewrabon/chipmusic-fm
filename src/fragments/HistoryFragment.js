@@ -53,7 +53,7 @@ export class HistoryFragment extends Component {
       message = (
         <>
           <p>
-            You haven&apos;t listened to any songs yet.
+            You haven&apos;t listened to any songs.
             {' '}
             <span role="img" aria-label="Thinking">
               🤔

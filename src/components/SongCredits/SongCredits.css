@@ -27,6 +27,7 @@
 @media (min-width: 1000px) {
   .song-credits {
     top: unset;
+    right: unset;
     bottom: 2rem;
     left: 2rem;
     max-width: calc(100vw - 400px - 6rem); /* viewport - player width - (2rem margins * 3) */
