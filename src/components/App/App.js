@@ -23,13 +23,16 @@ export class App extends Component {
     this.state = {
       areControlsDisabled: true,
       currentPageId: pageId,
+      currentSongIndex: 1,
       gif: {
         link: undefined,
         url: undefined,
       },
       hasLoadedSong: false,
+      hasViewedCurrentSong: false,
       history: [],
       isErrorBarVisible: false,
+      isInitialLoad: true,
       isSongPlaying: false,
       scrubberPosition: 0,
       shouldSongAutoplay: false,
@@ -38,6 +41,7 @@ export class App extends Component {
     };
 
     this.audioRef = React.createRef();
+    this.checkInitialLoadState = this.checkInitialLoadState.bind(this);
     this.fetchGif = this.fetchGif.bind(this);
     this.fetchSong = this.fetchSong.bind(this);
     this.handlePlayPause = this.handlePlayPause.bind(this);
@@ -52,10 +56,15 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    this.fetchSong();
     this.fetchGif();
 
+    window.addEventListener('click', () => {
+      this.checkInitialLoadState();
+    });
+
     window.addEventListener('keydown', (event) => {
+      this.checkInitialLoadState();
+      const { gif } = this.state;
       const gatsbyFocusWrapper = document.getElementById('gatsby-focus-wrapper');
       if (document.activeElement !== document.body
         && document.activeElement !== gatsbyFocusWrapper) {
@@ -87,6 +96,9 @@ export class App extends Component {
         case 'KeyV':
           window.open(song.link, '_blank');
           break;
+        case 'KeyG':
+          window.open(gif.link, '_blank');
+          break;
         // no default
       }
     });
@@ -113,6 +125,28 @@ export class App extends Component {
     window.history.pushState({}, '', pageId !== 'index' ? `/${pageId}` : '/');
   }
 
+  async addCurrentSongToUserHistory() {
+    const { authUser, database } = this.props;
+    const { song } = this.state;
+    const userSettingsRef = database.ref(`/userSettings/${authUser.uid}`);
+    const userSettingsSnapchat = await userSettingsRef.once('value');
+    const userSettings = userSettingsSnapchat.val() || {};
+    if (authUser && userSettings && userSettingsRef) {
+      userSettings.listenHistory = userSettings.listenHistory ? userSettings.listenHistory : [];
+      song.listenTimestamp = Date.now();
+      userSettings.listenHistory.push(song);
+      userSettingsRef.set(userSettings);
+    }
+  }
+
+  checkInitialLoadState() {
+    const { isInitialLoad } = this.state;
+    if (isInitialLoad) {
+      this.fetchSong();
+      this.setState({ isInitialLoad: false });
+    }
+  }
+
   async fetchGif() {
     this.setState({
       gif: {},
@@ -134,21 +168,26 @@ export class App extends Component {
 
     this.setState({
       hasLoadedSong: false,
+      hasViewedCurrentSong: false,
       song: EMPTY_SONG,
     });
 
     let currentSong = providedSong;
+    let { currentSongIndex } = this.state;
     if (typeof providedSong === 'undefined') {
       const lengthSnapchat = await database.ref('/music/length').once('value');
-      const currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
+      currentSongIndex = Math.floor(Math.random() * lengthSnapchat.val());
       const songsRef = database.ref(`/music/songs/${currentSongIndex}`);
       const songSnapchat = await songsRef.once('value');
       currentSong = songSnapchat.val();
     }
 
     this.setState({
+      currentSongIndex,
       history: history.concat([currentSong]),
       song: currentSong,
+    }, () => {
+      this.handlePlay();
     });
   }
 
@@ -230,6 +269,18 @@ export class App extends Component {
   }
 
   handleTimeUpdate(event) {
+    const { database } = this.props;
+    const { currentSongIndex, hasViewedCurrentSong, song } = this.state;
+    const player = this.audioRef.current;
+    if (!hasViewedCurrentSong && !player.paused && player.currentTime > 5) {
+      song.listenCount = song.listenCount ? parseInt(song.listenCount, 10) + 1 : 1;
+      database.ref(`/music/songs/${currentSongIndex}/listenCount`).set(song.listenCount);
+      this.setState({
+        hasViewedCurrentSong: true,
+        song,
+      });
+      this.addCurrentSongToUserHistory();
+    }
     this.setState({
       areControlsDisabled: false,
       scrubberPosition: event.target.currentTime,
@@ -244,6 +295,7 @@ export class App extends Component {
       gif,
       hasLoadedSong,
       isErrorBarVisible,
+      isInitialLoad,
       isSongPlaying,
       scrubberPosition,
       shouldSongAutoplay,
@@ -308,7 +360,7 @@ export class App extends Component {
               isVisible={hasLoadedSong}
               key="songCredits"
               name={songName}
-              playCount={song.playCount}
+              playCount={song.listenCount}
               year={new Date(song.date).getFullYear()}
             />
           ) : [(authUser !== null ? (
@@ -335,7 +387,7 @@ export class App extends Component {
           hasInvertedColors={hasInvertedColors}
           onClick={(event) => this.onNavigationButtonClick(event, authUser !== null)}
           style={{
-            opacity: hasInvertedColors || isLoadedSongPaused ? 1 : undefined,
+            opacity: hasInvertedColors || isLoadedSongPaused || isInitialLoad ? 1 : undefined,
           }}
         />
         <audio
@@ -346,7 +398,7 @@ export class App extends Component {
           src={song.file.url}
         />
         <SongPlayer
-          areControlsDisabled={areControlsDisabled}
+          areControlsDisabled={areControlsDisabled && !isInitialLoad}
           duration={duration}
           isSongPlaying={isSongPlaying}
           onScrubberChange={this.handleScrubberChange}
@@ -356,7 +408,7 @@ export class App extends Component {
           onSkipNext={this.handleSkipNext}
           scrubberPosition={scrubberPosition}
           style={{
-            opacity: hasInvertedColors || isLoadedSongPaused ? 1 : undefined,
+            opacity: hasInvertedColors || isLoadedSongPaused || isInitialLoad ? 1 : undefined,
           }}
           song={song}
         />

@@ -47,6 +47,7 @@ export class HistoryFragment extends Component {
   render() {
     const { hasLoadedSongs, listenHistory } = this.state;
     let message;
+
     if (!hasLoadedSongs) {
       message = 'Loading...';
     } else if (listenHistory.length === 0) {
@@ -65,6 +66,7 @@ export class HistoryFragment extends Component {
         </>
       );
     }
+    listenHistory.reverse();
     return (
       <>
         {message}
