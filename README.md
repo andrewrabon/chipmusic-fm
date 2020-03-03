@@ -1,6 +1,6 @@
 ## About
 
-ChipMusic.fm is a shuffle-only music player for the 8000+ free chiptunes available on ChipMusic.org,
+ChipMusic.fm is a shuffle-only music player for the 8000+ free chiptunes available on ChipMusic.org.
 
 ## Contributing
 
@@ -28,4 +28,4 @@ pointing to `localhost:8000`.
 
 ## License and Copyright
 
-[ChipMusic.fm is licensed under the Mozilla Public License, version 2.0.](https://github.com/andrewrabon/chipmusic-fm/blob/master/LICENSE) ChipMusic.fm itself is © 2017-2019 Andrew Rabon.
+[ChipMusic.fm is licensed under the Mozilla Public License, version 2.0.](https://github.com/andrewrabon/chipmusic-fm/blob/master/LICENSE) ChipMusic.fm itself is © 2017-2020 Andrew Rabon.
