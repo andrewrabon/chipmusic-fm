@@ -8,6 +8,7 @@ node_modules
 .log
 firebase-debug.log
 package-lock.json
+yarn.lock
 
 # Gatsby
 .cache/

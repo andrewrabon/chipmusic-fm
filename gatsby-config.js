@@ -32,17 +32,11 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-prefetch-google-fonts',
+      resolve: 'gatsby-plugin-google-fonts',
       options: {
         fonts: [
-          {
-            family: 'Josefin Sans',
-            variants: ['bold', 'italic'],
-          },
-          {
-            family: 'Roboto',
-            subsets: ['latin'],
-          },
+          'Josefin Sans:bold,italic',
+          'Roboto:latin',
         ],
         display: 'swap',
       },

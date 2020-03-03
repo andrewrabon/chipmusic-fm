@@ -151,7 +151,9 @@ export class App extends Component {
     this.setState({
       gif: {},
     });
-    const results = await fetch(process.env.GATSBY_GIPHY_RANDOM_ENDPOINT);
+    const tag = 'pixel art';
+    const giphyUrl = `https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=${tag}`;
+    const results = await fetch(giphyUrl);
     const gif = await results.json();
     this.setState({
       gif: {
